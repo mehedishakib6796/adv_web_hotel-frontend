@@ -60,23 +60,16 @@ const HomePage = () => {
               </button>
             </Link>
 
-            {/* ২. My Bookings - এটি তোমাকে বুকিং লিস্ট পেজে নিয়ে যাবে */}
+            {/* ২. MY BOOKINGS - এখান থেকেই ইউজার রিভিউ দেওয়ার অপশন পাবে */}
             <Link href="/my-bookings">
-              <button className="bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold px-10 py-5 rounded-2xl transition-all backdrop-blur-lg active:scale-95">
-                MY BOOKINGS
+              <button className="bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold px-10 py-5 rounded-2xl transition-all backdrop-blur-lg active:scale-95 flex items-center gap-2">
+                <span className="text-lg">📋</span> MY BOOKINGS
               </button>
             </Link>
 
-            {/* ৩. Give Review - রিভিউ দেওয়ার পেজে নিয়ে যাবে */}
-            <Link href="/give-review">
-              <button className="bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold px-10 py-5 rounded-2xl transition-all backdrop-blur-lg active:scale-95">
-                GIVE REVIEW
-              </button>
-            </Link>
-
-            {/* ৪. Profile Section - ইউজারের প্রোফাইল পেজে নিয়ে যাবে */}
+            {/* ৩. PROFILE Section */}
             <Link href="/profile">
-              <button className="bg-transparent border border-gray-800 hover:border-gray-500 text-gray-500 hover:text-white font-medium px-8 py-5 rounded-2xl transition-all active:scale-95">
+              <button className="bg-transparent border border-gray-800 hover:border-gray-500 text-gray-500 hover:text-white font-medium px-10 py-5 rounded-2xl transition-all active:scale-95">
                 PROFILE
               </button>
             </Link>
