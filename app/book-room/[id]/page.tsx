@@ -1,138 +1,148 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import axios from 'axios';
-import { useRouter, useParams } from 'next/navigation';
+import { useRouter, useParams, useSearchParams } from 'next/navigation';
+import Header from '@/components/Header'; 
+import Footer from '@/components/Footer';
 
-const BookRoomPage = () => {
-  const params = useParams();
-  const roomIdFromUrl = params.id; 
+const BookRoomContent = () => {
+  const { id: roomIdFromUrl } = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  
+  const initialImage = searchParams.get('img');
 
-  const [loading, setLoading] = useState(false);
+  const [accent] = useState("#487be8"); 
+  const [bg] = useState("#18142e");     
+  const [card] = useState("#111827");   
+  const [text] = useState("#ffffff");   
+  const [input] = useState("#1f2937"); 
+
+  const [userName, setUserName] = useState(""); 
+  const [roomImage, setRoomImage] = useState<string>(initialImage || ""); 
+
   const [formData, setFormData] = useState({
-    customerName: "",
-    email: "",
-    phoneNumber: "",
-    gender: "Male",
-    checkInDate: "",
-    checkOutDate: "",
+    customerName: "", email: "", phoneNumber: "", gender: "Male", checkInDate: "", checkOutDate: ""
   });
 
   useEffect(() => {
     const name = localStorage.getItem('user_name');
-    if (name) setFormData(prev => ({ ...prev, customerName: name }));
-    
     const token = localStorage.getItem('access_token');
-    if (!token) router.push('/login');
-  }, [router]);
+    
+    if (!token) return router.push('/login');
+    
+    if (name) {
+      setUserName(name);
+      setFormData(prev => ({ ...prev, customerName: name }));
+    }
 
-  // ব্যাকএন্ডের রিকোয়ারমেন্ট অনুযায়ী DD-MM-YYYY ফরম্যাট
-  const formatDate = (dateStr: string) => {
-    if (!dateStr) return "";
-    const [year, month, day] = dateStr.split('-');
-    return `${day}-${month}-${year}`; 
-  };
+    const fetchRoomDetails = async () => {
+      if (initialImage) return;
+      try {
+        const response = await axios.get(`http://localhost:3000/customer/rooms/${roomIdFromUrl}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setRoomImage(response.data.imageURL || "https://images.unsplash.com/photo-1631049307264-da0ec9d70304"); 
+      } catch (error) {
+        setRoomImage("https://images.unsplash.com/photo-1631049307264-da0ec9d70304");
+      }
+    };
+    fetchRoomDetails();
+  }, [roomIdFromUrl, router, initialImage]);
+
+  const handleInput = (e: any) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleBooking = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    const token = localStorage.getItem('access_token');
-
+    const formatDate = (d: string) => d.split('-').reverse().join('-');
     try {
-      // তোমার DTO অনুযায়ী প্রপার্টিগুলোর নাম হুবহু মিলানো হয়েছে
-      const payload = {
-        customerName: formData.customerName,
-        email: formData.email,
-        gender: formData.gender,
-        phoneNumber: formData.phoneNumber,
-        roomId: Number(roomIdFromUrl), // DTO তে 'roomId' নাম আছে (ছোট d)
-        checkInDate: formatDate(formData.checkInDate),
-        checkOutDate: formatDate(formData.checkOutDate)
+      const payload = { 
+        ...formData, 
+        roomId: Number(roomIdFromUrl), 
+        checkInDate: formatDate(formData.checkInDate), 
+        checkOutDate: formatDate(formData.checkOutDate) 
       };
-
-      const response = await axios.post('http://localhost:3000/customer/bookings', payload, {
-        headers: { 
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+      await axios.post('http://localhost:3000/customer/bookings', payload, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
       });
-
-      alert("✅ Booking Success!");
-      router.push('/home');
+      alert("✅ Reservation Confirmed!");
+      router.push('/my-bookings'); 
     } catch (error: any) {
-      const errorMsg = error.response?.data?.message;
-      alert("❌ Error: " + (Array.isArray(errorMsg) ? errorMsg.join(' | ') : errorMsg));
-    } finally {
-      setLoading(false);
+      alert("❌ Error: " + (error.response?.data?.message || "Something went wrong"));
     }
   };
 
   return (
-    <div className="min-h-screen bg-black text-white p-6 flex justify-center items-center font-sans">
-      <div className="bg-[#111] p-10 rounded-[40px] border border-white/5 w-full max-w-lg shadow-2xl">
-        
-        <div className="text-center mb-8">
-          <h2 className="text-2xl font-black text-yellow-500 uppercase tracking-tighter">Room Reservation</h2>
-          <p className="bg-yellow-500/10 text-yellow-500 text-[12px] py-1 px-4 rounded-full inline-block mt-3 font-bold uppercase">
-            Room ID: {roomIdFromUrl}
-          </p>
+    <div className="min-h-screen flex flex-col font-sans" style={{ backgroundColor: bg, color: text }}>
+      <Header userName={userName} />
+
+      <main className="flex-1 flex items-center justify-center p-4">
+        {/* কার্ডের সাইজ max-w-4xl করে ছোট করা হয়েছে */}
+        <div className="w-full max-w-4xl rounded-[2rem] overflow-hidden flex flex-col md:flex-row border border-white/5 shadow-2xl transition-all" style={{ backgroundColor: card }}>
+          
+          <div className="md:w-5/12 relative flex flex-col justify-end overflow-hidden group min-h-[300px]">
+            {roomImage && (
+              <img 
+                src={roomImage} 
+                alt="Room" 
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                onError={(e: any) => { e.target.src = "https://images.unsplash.com/photo-1631049307264-da0ec9d70304"; }} 
+              />
+            )}
+            <div className="absolute inset-0 opacity-80" style={{ background: `linear-gradient(to top, ${accent}, transparent)` }}></div>
+            <div className="relative p-8 z-10 text-white">
+              <h2 className="text-4xl font-black italic drop-shadow-md">Room #{roomIdFromUrl}</h2>
+              <p className="text-[10px] font-bold uppercase tracking-widest opacity-80 mt-1">Premium Choice</p>
+            </div>
+          </div>
+
+          <div className="md:w-7/12 p-8 md:p-10">
+            {/* শিরোনাম সাইজ ছোট করা হয়েছে */}
+            <div className="mb-6">
+              <h1 className="text-2xl font-black uppercase tracking-widest" style={{ color: accent }}>Room Booking</h1>
+              <div className="h-1 w-8 bg-slate-700 mt-2 rounded-full"></div>
+            </div>
+
+            <form onSubmit={handleBooking} className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <InputField label="Full Name" name="customerName" val={formData.customerName} change={handleInput} full accent={accent} bg={input} />
+              <InputField label="Email Address" name="email" type="email" placeholder="example@mail.com" change={handleInput} accent={accent} bg={input} />
+              <InputField label="Phone Number" name="phoneNumber" placeholder="01XXXXXXXXX" change={handleInput} accent={accent} bg={input} />
+              <InputField label="Check-in Date" name="checkInDate" type="date" change={handleInput} accent={accent} bg={input} />
+              <InputField label="Check-out Date" name="checkOutDate" type="date" change={handleInput} accent={accent} bg={input} />
+
+              <div className="md:col-span-2 pt-4 flex gap-3">
+                <button type="submit" className="flex-1 font-bold py-4 rounded-xl uppercase text-xs transition-all active:scale-95 shadow-lg" style={{ backgroundColor: accent, color: "#ffffff" }}>
+                  Confirm Now
+                </button>
+                <button type="button" onClick={() => router.back()} className="px-8 border border-white/10 text-[10px] font-bold uppercase rounded-xl hover:bg-white/5 transition-all">
+                  Back
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-        
-        <form onSubmit={handleBooking} className="space-y-5">
-          <div className="space-y-1">
-            <label className="text-[10px] uppercase font-bold text-gray-500 ml-2">Customer Name</label>
-            <input type="text" required value={formData.customerName}
-              className="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-yellow-500"
-              onChange={(e) => setFormData({...formData, customerName: e.target.value})} 
-            />
-          </div>
+      </main>
 
-          <div className="space-y-1">
-            <label className="text-[10px] uppercase font-bold text-gray-500 ml-2">Email (@gmail.com)</label>
-            <input type="email" required placeholder="example@gmail.com"
-              className="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-yellow-500"
-              onChange={(e) => setFormData({...formData, email: e.target.value})} 
-            />
-          </div>
-
-          <div className="space-y-1">
-            <label className="text-[10px] uppercase font-bold text-gray-500 ml-2">Phone Number</label>
-            <input type="text" required placeholder="017XXXXXXXX"
-              className="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-yellow-500"
-              onChange={(e) => setFormData({...formData, phoneNumber: e.target.value})} 
-            />
-          </div>
-
-          <div className="space-y-1">
-            <label className="text-[10px] uppercase font-bold text-gray-500 ml-2">Gender</label>
-            <select className="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-yellow-500"
-              onChange={(e) => setFormData({...formData, gender: e.target.value})}>
-              <option value="Male" className="bg-black">Male</option>
-              <option value="Female" className="bg-black">Female</option>
-            </select>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1">
-              <label className="text-[10px] uppercase font-bold text-gray-500 ml-2">Check-in</label>
-              <input type="date" required className="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-yellow-500"
-                onChange={(e) => setFormData({...formData, checkInDate: e.target.value})} />
-            </div>
-            <div className="space-y-1">
-              <label className="text-[10px] uppercase font-bold text-gray-500 ml-2">Check-out</label>
-              <input type="date" required className="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-yellow-500"
-                onChange={(e) => setFormData({...formData, checkOutDate: e.target.value})} />
-            </div>
-          </div>
-
-          <button type="submit" disabled={loading} 
-            className="w-full bg-yellow-500 text-black font-black py-5 rounded-[22px] mt-4 uppercase tracking-widest text-xs active:scale-95 transition-all shadow-xl shadow-yellow-500/10">
-            {loading ? "Processing..." : "Confirm Booking"}
-          </button>
-        </form>
-      </div>
+      <Footer />
     </div>
   );
 };
 
-export default BookRoomPage;
+export default function BookRoomPage() {
+  return (
+    <Suspense fallback={<div className="h-screen flex items-center justify-center bg-[#18142e] text-white">Loading...</div>}>
+      <BookRoomContent />
+    </Suspense>
+  );
+}
+
+const InputField = ({ label, name, type = "text", val, change, full, accent, bg, placeholder = "" }: any) => (
+  <div className={`${full ? 'md:col-span-2' : ''} space-y-1.5`}>
+    <label className="text-[10px] uppercase font-bold text-slate-500 ml-1 tracking-wider">{label}</label>
+    <input 
+      name={name} type={type} required value={val} onChange={change} placeholder={placeholder}
+      style={{ backgroundColor: bg, border: `1px solid rgba(255,255,255,0.05)`, color: "#ffffff" }}
+      className="w-full p-4 rounded-xl outline-none text-sm transition-all focus:ring-1 placeholder:text-gray-600"
+    />
+  </div>
+);

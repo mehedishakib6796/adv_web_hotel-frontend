@@ -14,7 +14,7 @@ const HomePage = () => {
     bgMain: "#0f172a",
     primary: "#487be8",
     textMuted: "#94a3b8",
-    imgOpacity: "0.15"
+    imgOpacity: "0.20"
   };
 
   useEffect(() => {
