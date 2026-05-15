@@ -9,68 +9,82 @@ const HomePage = () => {
   const [userName, setUserName] = useState<string>("");
   const router = useRouter();
 
+  // 🎨 থিম কনফিগ
+  const theme = {
+    bgMain: "#0f172a",
+    primary: "#487be8",
+    textMuted: "#94a3b8",
+    imgOpacity: "0.15"
+  };
+
   useEffect(() => {
-    // লোকাল স্টোরেজ থেকে অথেন্টিকেশন ডাটা চেক করা
     const token = localStorage.getItem('access_token');
     const name = localStorage.getItem('user_name');
 
     if (!token) {
-      router.push('/login'); 
+      router.push('/login');
     } else {
       setUserName(name || "Guest User");
     }
   }, [router]);
 
+  // 💡 বাটনের সাইজ বড় করার জন্য sm:w-60 এবং py-5 ব্যবহার করা হয়েছে
+  const buttonClass = `w-full sm:w-60 text-white font-bold py-5 rounded-2xl transition-all duration-300 hover:brightness-125 hover:scale-105 active:scale-95 shadow-xl text-xl text-center`;
+
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white flex flex-col font-sans overflow-hidden">
+    <div style={{ backgroundColor: theme.bgMain }} className="min-h-screen text-white flex flex-col font-sans">
       
-      {/* হেডারে ডাইনামিক নাম দেখাবে */}
       <Header userName={userName} />
 
       <main className="flex-1 relative flex items-center justify-center">
         
-        {/* ব্যাকগ্রাউন্ড ইমেজ এবং ডার্ক গ্রাডিয়েন্ট ওভারলে */}
-        <div 
-          className="absolute inset-0 bg-cover bg-center transition-transform duration-[5000ms] hover:scale-105"
-          style={{ 
-            backgroundImage: "url('https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=1920')" 
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage: "url('https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=1920')",
+            opacity: theme.imgOpacity
           }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/30 to-black/90"></div>
-        </div>
+        ></div>
 
-        {/* মেইন কন্টেন্ট সেকশন */}
-        <div className="relative text-center z-10 px-6 max-w-5xl">
+        <div className="relative text-center z-10 px-6">
           
-          <h1 className="text-6xl md:text-8xl font-black mb-6 tracking-tighter leading-none">
-            Welcome, <span className="text-[#eab308] uppercase">{userName}</span>
+          {/* Welcome টেক্সট এখন আরও বড় (text-6xl থেকে 8xl) */}
+          <h1 className="text-6xl md:text-8xl font-black mb-6 tracking-tighter">
+            Welcome, <br className="md:hidden" /> 
+            <span style={{ color: theme.primary }}>{userName}</span>
           </h1>
           
-          <p className="text-gray-300 text-xl md:text-2xl mb-12 max-w-2xl mx-auto leading-relaxed font-light">
-            Step into a world of elegance at <span className="text-white font-bold italic">Hotel Royal</span>. 
-            Discover rooms that redefine luxury and comfort.
+          {/* নিচের প্যারাগ্রাফের সাইজ এবং মার্জিন (mb-16) বাড়িয়ে গ্যাপ তৈরি করা হয়েছে */}
+          <p style={{ color: theme.textMuted }} className="text-xl md:text-2xl mb-16 max-w-2xl mx-auto font-light">
+            Experience the pinnacle of luxury at <span className="text-white font-semibold italic">Hotel Royal</span>.
           </p>
 
-          <div className="flex flex-wrap justify-center gap-5">
+          <div className="flex flex-col sm:flex-row justify-center gap-6">
             
-            {/* ১. BOOK A ROOM */}
             <Link href="/view-rooms">
-              <button className="bg-[#eab308] hover:bg-[#facc15] text-[#0f1a15] font-black px-10 py-5 rounded-2xl transition-all transform hover:scale-105 shadow-[0_10px_40px_rgba(234,179,8,0.3)] active:scale-95 flex items-center gap-2">
-                <span className="text-lg">🏨</span> BOOK A ROOM
+              <button 
+                className={buttonClass}
+                style={{ backgroundColor: theme.primary }}
+              >
+                Book a Room
               </button>
             </Link>
 
-            {/* ২. MY BOOKINGS - এখান থেকেই ইউজার রিভিউ দেওয়ার অপশন পাবে */}
             <Link href="/my-bookings">
-              <button className="bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold px-10 py-5 rounded-2xl transition-all backdrop-blur-lg active:scale-95 flex items-center gap-2">
-                <span className="text-lg">📋</span> MY BOOKINGS
+              <button 
+                className={buttonClass}
+                style={{ backgroundColor: theme.primary }}
+              >
+                My Bookings
               </button>
             </Link>
 
-            {/* ৩. PROFILE Section */}
             <Link href="/profile">
-              <button className="bg-transparent border border-gray-800 hover:border-gray-500 text-gray-500 hover:text-white font-medium px-10 py-5 rounded-2xl transition-all active:scale-95">
-                PROFILE
+              <button 
+                className={buttonClass}
+                style={{ backgroundColor: theme.primary }}
+              >
+                My Profile
               </button>
             </Link>
 
