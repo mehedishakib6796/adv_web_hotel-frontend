@@ -1,8 +1,8 @@
 "use client";
 import { useState } from 'react';
-import api from '../../lib/api'; // নিশ্চিত করো এই পাথটি তোমার প্রজেক্টে সঠিক আছে
+import api from '../../lib/api'; 
 import { useRouter } from 'next/navigation';
-import Link from 'next/link'; // 'link' এর বদলে 'next/link' হবে
+import Link from 'next/link'; 
 
 const colors = {
   bgOuter: "#0f172a",
@@ -11,8 +11,8 @@ const colors = {
   primary: "#2563eb",
   white: "#ffffff",
   textGray: "#94a3b8",
-  errorBg: "#450a0a",
-  errorText: "#f87171"
+  errorBg: "#882929",
+  errorText: "#f69090"
 };
 
 export default function LoginPage() {
@@ -30,27 +30,31 @@ export default function LoginPage() {
       return;
     }
 
+
     try {
-      // API call
+      
       const res = await api.post('/customer/login', { username: name, password });
       
       if (res.data?.access_token) {
-        // ডাটা সেভ করা
+       
         localStorage.setItem('access_token', res.data.access_token);
         localStorage.setItem('user_name', name); 
         
-        // রিডাইরেক্ট
+       
         router.push('/home'); 
       }
+
     } catch (err: any) {
-      setError('Invalid username or password. Please try again.');
+      setError('Invalid username or password.');
     }
   };
 
+
+  
   return (
     <div 
       style={{ backgroundColor: colors.bgOuter }} 
-      className="min-h-screen flex items-center justify-center p-6"
+      className="min-h-screen flex items-center justify-center p-12"
     >
       <div 
         style={{ backgroundColor: colors.bgCard }} 
@@ -90,7 +94,7 @@ export default function LoginPage() {
               </label>
               <input 
                 type="text" 
-                autoComplete="new-password" // অটোফিল ঠেকাতে সাহায্য করে
+                autoComplete="new-password" 
                 placeholder="Enter Your Name"
                 value={name} 
                 onChange={(e) => setName(e.target.value)}

@@ -9,6 +9,16 @@ const EditBookingPage = () => {
   const { id } = useParams();
   const router = useRouter();
   
+  // আইডি থেকে কোলন (:), স্পেস বা যেকোনো নন-ডিজিট ক্যারেক্টার নিখুঁতভাবে ক্লিন করার লজিক
+  const cleanId = typeof id === 'string' ? id.replace(/[^0-9]/g, '') : id;
+
+  // থিম কালার ভ্যারিয়েবলস
+  const [accent] = useState("#487be8"); 
+  const [bg] = useState("#18142e");     
+  const [card] = useState("#111827");   
+  const [text] = useState("#ffffff");   
+  const [inputBg] = useState("#1f2937"); 
+
   const [userName, setUserName] = useState("");
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
@@ -25,14 +35,12 @@ const EditBookingPage = () => {
     roomId: 0
   });
 
-  // ডাটাবেসের ISO তারিখকে Input ফিল্ডের উপযোগী (YYYY-MM-DD) করা
   const toViewDate = (dateVal: any) => {
     if (!dateVal) return "";
     const d = new Date(dateVal);
     return isNaN(d.getTime()) ? "" : d.toISOString().split('T')[0];
   };
 
-  // Input ফিল্ডের তারিখকে ব্যাকএন্ড DTO (DD-MM-YYYY) ফরম্যাটে নেওয়া
   const toBackendDate = (dateStr: string) => {
     if (!dateStr) return "";
     const [year, month, day] = dateStr.split("-");
@@ -47,34 +55,32 @@ const EditBookingPage = () => {
       return;
     }
     setUserName(name || "User");
-    fetchBookingDetails(token);
-  }, [id]);
-
-  const fetchBookingDetails = async (token: string) => {
-    try {
-      // তোর নতুন বানানো GET /bookings/:id রুট থেকে ডাটা আসবে
-      const res = await axios.get(`http://localhost:3000/customer/bookings/${id}`, {
+    
+    if (cleanId) {
+      axios.get(`http://localhost:3000/customer/bookings/${cleanId}`, {
         headers: { Authorization: `Bearer ${token}` }
-      });
-      
-      const data = res.data;
-      if (data) {
-        setFormData({
-          customerName: data.customerName || '',
-          email: data.email || '',
-          phoneNumber: data.phoneNumber || '',
-          gender: data.gender || 'Male',
-          roomId: data.room?.id || data.roomId || 0,
-          checkInDate: toViewDate(data.checkInDate),
-          checkOutDate: toViewDate(data.checkOutDate)
-        });
-      }
-    } catch (err: any) {
-      setError("ডাটা লোড করা যায়নি। আইডি ঠিক আছে কি না চেক করো।");
-    } finally {
-      setFetching(false);
+      })
+      .then(res => {
+        const data = res.data;
+        if (data) {
+          setFormData({
+            customerName: data.customerName || '',
+            email: data.email || '',
+            phoneNumber: data.phoneNumber || '',
+            gender: data.gender || 'Male',
+            roomId: data.room?.id || data.roomId || 0,
+            checkInDate: toViewDate(data.checkInDate),
+            checkOutDate: toViewDate(data.checkOutDate)
+          });
+        }
+      })
+      .catch((err) => {
+        const msg = err.response?.data?.message || "ডাটা লোড করা যায়নি। আইডি চেক করো।";
+        setError(Array.isArray(msg) ? msg[0] : msg);
+      })
+      .finally(() => setFetching(false));
     }
-  };
+  }, [cleanId, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,8 +89,6 @@ const EditBookingPage = () => {
     setMessage("");
 
     const token = localStorage.getItem('access_token');
-    
-    // ব্যাকএন্ডে পাঠানোর জন্য ডাটা রেডি করা
     const payload = {
       ...formData,
       roomId: Number(formData.roomId),
@@ -93,94 +97,126 @@ const EditBookingPage = () => {
     };
 
     try {
-      await axios.patch(`http://localhost:3000/customer/bookings/${id}`, payload, {
+      await axios.patch(`http://localhost:3000/customer/bookings/${cleanId}`, payload, {
         headers: { 
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       });
-      setMessage("✅ বুকিং সফলভাবে আপডেট হয়েছে!");
+      setMessage("✅ বুকিং সফলভাবে আপডেট হয়েছে!");
       setTimeout(() => router.push('/my-bookings'), 2000);
     } catch (err: any) {
-      const errMsg = err.response?.data?.message;
-      setError(Array.isArray(errMsg) ? errMsg[0] : errMsg || "আপডেট ব্যর্থ হয়েছে।");
+      const errMsg = err.response?.data?.message || "আপডেট ব্যর্থ হয়েছে।";
+      setError(Array.isArray(errMsg) ? errMsg[0] : errMsg);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col font-sans">
+    <div className="min-h-screen flex flex-col font-sans" style={{ backgroundColor: bg, color: text }}>
       <Header userName={userName} />
       
-      <main className="flex-1 flex items-center justify-center px-4 py-20">
-        <div className="max-w-xl w-full bg-[#0d0d0d] p-10 rounded-[45px] border border-white/5 shadow-2xl">
+      <main className="flex-1 flex items-center justify-center p-4">
+        <div className="w-full max-w-xl rounded-[2rem] p-8 md:p-10 border border-white/5 shadow-2xl transition-all" style={{ backgroundColor: card }}>
           
-          <div className="text-center mb-10">
-            <h2 className="text-3xl font-black uppercase italic tracking-tight">
-              EDIT <span className="text-blue-500">BOOKING</span>
-            </h2>
-            <p className="text-[10px] text-zinc-500 uppercase mt-2">Update phone and stay duration</p>
+          {/* হেডার সেকশন */}
+          <div className="mb-6">
+            <h1 className="text-2xl font-black uppercase tracking-widest" style={{ color: accent }}>Update Booking</h1>
+            <div className="h-1 w-8 bg-slate-700 mt-2 rounded-full"></div>
           </div>
 
           {fetching ? (
-            <p className="text-center animate-pulse text-zinc-600 font-bold">LOADING...</p>
+            <p className="text-center py-10 animate-pulse text-zinc-500 font-bold tracking-widest text-xs">LOADING...</p>
           ) : (
-            <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <form onSubmit={handleSubmit} className="space-y-5">
               
-              {/* Name & Email - Auto-filled & ReadOnly */}
-              <div className="md:col-span-2 space-y-4">
-                <div>
-                  <label className="text-[10px] uppercase font-black text-zinc-600 mb-2 block tracking-widest">Customer Name</label>
-                  <input type="text" value={formData.customerName} readOnly className="w-full bg-white/[0.02] border border-white/5 p-4 rounded-2xl text-zinc-500 cursor-not-allowed outline-none" />
-                </div>
-                <div>
-                  <label className="text-[10px] uppercase font-black text-zinc-600 mb-2 block tracking-widest">Email Address</label>
-                  <input type="email" value={formData.email} readOnly className="w-full bg-white/[0.02] border border-white/5 p-4 rounded-2xl text-zinc-500 cursor-not-allowed outline-none" />
-                </div>
+              {/* Customer Name - ReadOnly */}
+              <div className="space-y-1.5">
+                <label className="text-[10px] uppercase font-bold text-slate-500 ml-1 tracking-wider">Customer Name</label>
+                <input 
+                  type="text" 
+                  value={formData.customerName} 
+                  readOnly 
+                  style={{ backgroundColor: inputBg, border: `1px solid rgba(255,255,255,0.05)` }}
+                  className="w-full p-4 rounded-xl outline-none text-sm text-zinc-400 cursor-not-allowed opacity-70" 
+                />
               </div>
 
-              {/* Phone - Editable */}
-              <div className="md:col-span-2">
-                <label className="text-[10px] uppercase font-black text-blue-500 mb-2 block tracking-widest">Phone Number</label>
+              {/* Email Address - ReadOnly */}
+              <div className="space-y-1.5">
+                <label className="text-[10px] uppercase font-bold text-slate-500 ml-1 tracking-wider">Email Address</label>
+                <input 
+                  type="email" 
+                  value={formData.email} 
+                  readOnly 
+                  style={{ backgroundColor: inputBg, border: `1px solid rgba(255,255,255,0.05)` }}
+                  className="w-full p-4 rounded-xl outline-none text-sm text-zinc-400 cursor-not-allowed opacity-70" 
+                />
+              </div>
+
+              {/* Phone Number - Editable */}
+              <div className="space-y-1.5">
+                <label className="text-[10px] uppercase font-bold text-slate-500 ml-1 tracking-wider">Phone Number</label>
                 <input 
                   type="text" 
                   value={formData.phoneNumber} 
                   onChange={(e) => setFormData({...formData, phoneNumber: e.target.value})} 
-                  className="w-full bg-white/5 border border-blue-500/20 p-4 rounded-2xl outline-none focus:border-blue-500 transition-all font-bold" 
+                  style={{ backgroundColor: inputBg, border: `1px solid rgba(255,255,255,0.05)`, color: "#ffffff" }}
+                  className="w-full p-4 rounded-xl outline-none text-sm font-medium focus:ring-1 transition-all"
                   required 
                 />
               </div>
 
-              {/* Dates - Editable */}
-              <div>
-                <label className="text-[10px] uppercase font-black text-blue-500 mb-2 block tracking-widest">Check-In</label>
-                <input 
-                  type="date" 
-                  value={formData.checkInDate} 
-                  onChange={(e) => setFormData({...formData, checkInDate: e.target.value})} 
-                  className="w-full bg-white/5 border border-blue-500/20 p-4 rounded-2xl outline-none" 
-                  required 
-                />
+              {/* Dates - 2 Column Layout */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] uppercase font-bold text-slate-500 ml-1 tracking-wider">Check-In</label>
+                  <input 
+                    type="date" 
+                    value={formData.checkInDate} 
+                    onChange={(e) => setFormData({...formData, checkInDate: e.target.value})} 
+                    style={{ backgroundColor: inputBg, border: `1px solid rgba(255,255,255,0.05)`, color: "#ffffff" }}
+                    className="w-full p-4 rounded-xl outline-none text-sm focus:ring-1" 
+                    required 
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[10px] uppercase font-bold text-slate-500 ml-1 tracking-wider">Check-Out</label>
+                  <input 
+                    type="date" 
+                    value={formData.checkOutDate} 
+                    onChange={(e) => setFormData({...formData, checkOutDate: e.target.value})} 
+                    style={{ backgroundColor: inputBg, border: `1px solid rgba(255,255,255,0.05)`, color: "#ffffff" }}
+                    className="w-full p-4 rounded-xl outline-none text-sm focus:ring-1" 
+                    required 
+                  />
+                </div>
               </div>
 
-              <div>
-                <label className="text-[10px] uppercase font-black text-blue-500 mb-2 block tracking-widest">Check-Out</label>
-                <input 
-                  type="date" 
-                  value={formData.checkOutDate} 
-                  onChange={(e) => setFormData({...formData, checkOutDate: e.target.value})} 
-                  className="w-full bg-white/5 border border-blue-500/20 p-4 rounded-2xl outline-none" 
-                  required 
-                />
+              {/* Buttons - Confirm & Back */}
+              <div className="pt-4 flex gap-3">
+                <button 
+                  type="submit" 
+                  disabled={loading}
+                  className="flex-1 font-bold py-4 rounded-xl uppercase text-xs transition-all active:scale-95 shadow-lg disabled:opacity-50" 
+                  style={{ backgroundColor: accent, color: "#ffffff" }}
+                >
+                  {loading ? "Saving..." : "Update Booking"}
+                </button>
+                <button 
+                  type="button" 
+                  onClick={() => router.back()} 
+                  className="px-8 border border-white/10 text-[10px] font-bold uppercase rounded-xl hover:bg-white/5 transition-all"
+                >
+                  Back
+                </button>
               </div>
 
-              <button disabled={loading} className="md:col-span-2 w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-5 rounded-[20px] uppercase mt-4 transition-all active:scale-95">
-                {loading ? "SAVING..." : "UPDATE BOOKING"}
-              </button>
-
-              {message && <div className="md:col-span-2 text-green-500 text-center font-bold text-[10px] uppercase bg-green-500/10 py-3 rounded-xl border border-green-500/20">{message}</div>}
-              {error && <div className="md:col-span-2 text-red-500 text-center font-bold text-[10px] uppercase bg-red-500/10 py-3 rounded-xl border border-red-500/20">{error}</div>}
+              {/* এরর এবং সাকসেস মেসেজ */}
+              {message && <div className="text-green-400 text-center text-xs bg-green-500/5 py-3 rounded-xl border border-green-500/10 font-bold uppercase tracking-wider">{message}</div>}
+              {error && <div className="text-red-400 text-center text-xs bg-red-500/5 py-3 rounded-xl border border-red-500/10 font-bold uppercase tracking-wider">{error}</div>}
             </form>
           )}
         </div>
