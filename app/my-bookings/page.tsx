@@ -7,15 +7,14 @@ import Footer from '@/components/Footer';
 import { usePusher } from '../../lib/usePusher';
 
 const MyBookingsPage = () => {
-  // 🎨 মাউস দিয়ে কালার চেঞ্জ করার জন্য এই সেকশনটি ব্যবহার করো
-  // VS Code-এ হেক্স কোডের ওপর মাউস নিলে কালার বক্স আসবে।
+  
   const theme = {
-    backgroundColor: "#0f172a",       // পুরো পেজের ব্যাকগ্রাউন্ড
-    cardColor: "#10235e",             // প্রতিটি বুকিং কার্ডের রঙ
-    accentColor: "#6366f1",           // প্রধান হাইলাইট রঙ (Indigo)
-    roomBoxColor: "#161b22",         // বাম পাশের রুম আইডি বক্সের রঙ
-    textColor: "#94a3b8",             // সাধারণ টেক্সট রঙ
-    headerTitleColor: "#ffffff",      // মেইন টাইটেল রঙ
+    backgroundColor: "#0f172a",      
+    cardColor: "#10235e",             
+    accentColor: "#6366f1",          
+    roomBoxColor: "#161b22",       
+    textColor: "#94a3b8",             
+    headerTitleColor: "#ffffff",     
   };
 
   const [bookings, setBookings] = useState<any[]>([]);
