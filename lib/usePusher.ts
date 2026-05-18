@@ -1,25 +1,34 @@
 // hotel-frontend/lib/usePusher.ts
 import { useEffect } from 'react';
-import Pusher from 'pusher-js';
+import * as PusherPushNotifications from '@pusher/push-notifications-web';
 
-export const usePusher = (channelName: string, eventName: string, onUpdate: (data: any) => void) => {
+export const usePusherBeams = (interestName: string) => {
   useEffect(() => {
-    // ১. Pusher কানেকশন তৈরি
-    const pusher = new Pusher('f6ea48692172c968bea9', {
-      cluster: 'ap2'
+    // ১. Pusher Beams ক্লায়েন্ট ইনিশিয়ালাইজ করা
+    const beamsClient = new PusherPushNotifications.Client({
+      instanceId: '14a93161-ec71-4fc7-8525-b8deae1f33be', // 🌟 এখানে আপনার Pusher ড্যাশবোর্ডের Instance ID বসবে
     });
 
-    // ২. চ্যানেলে সাবস্ক্রাইব করা
-    const channel = pusher.subscribe(channelName);
+    // ২. নোটিফিকেশন পারমিশন চাওয়া এবং ইন্টারেস্টে সাবস্ক্রাইব করা
+    beamsClient.start()
+      .then(() => beamsClient.addDeviceInterest(interestName))
+      .then(() => {
+        console.log(`Successfully subscribed to Beams interest: ${interestName}`);
+      })
+      .catch((error) => {
+        console.error('Error starting Pusher Beams client:', error);
+      });
 
-    // ৩. ইভেন্ট লিসেন করা
-    channel.bind(eventName, (data: any) => {
-      onUpdate(data);
-    });
-
-    // ৪. ক্লিনআপ (যাতে মেমোরি লিক বা ডুপ্লিকেট কানেকশন না হয়)
+    // ৩. ক্লিনআপ ফাংশন (যাতে কম্পোনেন্ট আনমাউন্ট হলে ডুপ্লিকেট লিসেনার তৈরি না হয়)
     return () => {
-      pusher.unsubscribe(channelName);
+      beamsClient.getDeviceInterests()
+        .then((interests) => {
+          if (interests.includes(interestName)) {
+            return beamsClient.removeDeviceInterest(interestName);
+          }
+        })
+        .then(() => console.log(`Unsubscribed from interest: ${interestName}`))
+        .catch(console.error);
     };
-  }, [channelName, eventName, onUpdate]);
+  }, [interestName]);
 };

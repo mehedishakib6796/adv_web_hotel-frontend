@@ -8,7 +8,7 @@ const colors = {
   bgOuter: "#0f172a",
   bgCard: "#1e293b",  
   bgInput: "#0f172a",
-  primary: "#487be8", // ল্যান্ডিং পেজের রয়্যাল ব্লু থিম ম্যাচ করার জন্য
+  primary: "#487be8", 
   white: "#ffffff",
   textGray: "#94a3b8",
   errorBg: "#882929",
@@ -46,7 +46,7 @@ export default function LoginPage() {
   return (
     <div style={{ backgroundColor: colors.bgOuter }} className="min-h-screen text-white flex flex-col font-sans antialiased">
       
-      {/* ─── ১. ল্যান্ডিং পেজের হুবহু হেডার ─── */}
+    
       <header className="fixed top-0 left-0 w-full z-50 bg-slate-900/60 backdrop-blur-md border-b border-slate-800/40">
         <div className="max-w-full mx-auto px-6 md:px-16 h-20 flex items-center justify-between">
           
@@ -57,14 +57,14 @@ export default function LoginPage() {
         </div>
       </header>
       
-      {/* ─── ২. মেইন কন্টেন্ট সেকশন (মাঝখানে আপনার লগইন কার্ড) ─── */}
+      
       <main className="flex-grow flex items-center justify-center px-6 py-24 md:py-32">
         <div 
           style={{ backgroundColor: colors.bgCard }} 
           className="w-full max-w-5xl flex flex-col md:flex-row rounded-3xl shadow-2xl overflow-hidden border border-white/10"
         >
         
-          {/* বাম পাশের ইমেজ (শুধুমাত্র বড় স্ক্রিনে ভিজিবল) */}
+         
           <div className="hidden md:block md:w-1/2 relative">
             <img 
               src="https://images.unsplash.com/photo-1571896349842-33c89424de2d?q=80&w=1480" 
@@ -73,12 +73,10 @@ export default function LoginPage() {
             />
           </div>
 
-          {/* ডান পাশের আপনার অরিজিনাল ফর্ম */}
           <div className="w-full md:w-1/2 p-10 md:p-16 flex flex-col justify-center">
             <h1 style={{ color: colors.white }} className="text-4xl text-left font-extrabold mb-2">Login</h1>
             <p style={{ color: colors.textGray }} className="text-lg text-left mb-2">Access Hotel Royal</p>
 
-            {/* এরর মেসেজ বক্স */}
             <div className="h-12 mb-2"> 
               {error && (
                 <div 
@@ -90,7 +88,7 @@ export default function LoginPage() {
               )}
             </div>
 
-            {/* ফর্ম সাবমিশন এবং ইনপুটসমূহ */}
+            
             <form onSubmit={handleLogin} className="space-y-4" autoComplete="off">
             
               <div>
@@ -143,7 +141,7 @@ export default function LoginPage() {
         </div>
       </main>
    
-      {/* ─── ৩. ল্যান্ডিং পেজের হুবহু ফুটার ─── */}
+    
       <footer className="bg-slate-950 py-6 text-center text-slate-600 text-xs tracking-widest uppercase border-t border-slate-900/40 mt-auto">
         <p>&copy; {new Date().getFullYear()} Hotel Royal. All rights reserved.</p>
       </footer>

@@ -5,39 +5,36 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
-// 💡 সব লজিক এবং ইউআই এখন ১টি মাত্র সহজ কম্পোনেন্টের ভেতরে
+
 const GiveReviewContent = () => {
   const [userName, setUserName] = useState(""); 
   const [bookingId, setBookingId] = useState(""); 
   const [comment, setComment] = useState("");
   const [rating, setRating] = useState(5);
-  const [loading, setLoading] = useState(false); // ফর্ম সাবমিশনে আর ইউজ হচ্ছে না
+  const [loading, setLoading] = useState(false); 
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // ==========================================================
-  // 🎨 কালার প্যানেল (এখান থেকে নিজের ইচ্ছামতো কালার এডিট করো)
-  // ==========================================================
+ 
   const colors = {
-    pageBg: "#18142e",       // পুরো পেজের ব্যাকগ্রাউন্ড কালার
-    cardBg: "#111827",       // মাঝখানের মেইন কার্ডের ব্যাকগ্রাউন্ড কালার
-    accent: "#487be8",       // মেইন হাইলাইট কালার (টাইটেল, বাটন এবং ফোকাসড বর্ডার)
-    inputBg: "#1f2937",      // ইনপুট ফিল্ড ও টেক্সটএরিয়ার ব্যাকগ্রাউন্ড কালার
-    inputBorder: "rgba(255, 255, 255, 0.05)", // ইনপুটের হালকা বর্ডার কালার
-    textLabel: "#64748b",    // ইনপুটের উপরের ছোট লেবেল টেক্সটের কালার (slate-500)
-    textReadonly: "#a1a1aa", // কাস্টমার নেম (যেটা এডিট করা যায় না) সেটার টেক্সট কালার
-    textInput: "#ffffff",    // সাধারণ ইনপুট টেক্সটের কালার
+    pageBg: "#18142e",       
+    cardBg: "#111827",      
+    accent: "#487be8",      
+    inputBg: "#1f2937",      
+    inputBorder: "rgba(255, 255, 255, 0.05)", 
+    textLabel: "#64748b",    
+    textReadonly: "#a1a1aa", 
+    textInput: "#ffffff",    
   };
 
   useEffect(() => {
-    // ১. URL থেকে bookingId নেওয়া
+    
     const idFromUrl = searchParams.get('bookingId');
     if (idFromUrl) setBookingId(idFromUrl);
 
-    // ২. LocalStorage থেকে ইউজার ও টোকেন চেক করা
     const name = localStorage.getItem('user_name');
     const token = localStorage.getItem('access_token');
 
@@ -73,7 +70,7 @@ const GiveReviewContent = () => {
       if (res.status === 201 || res.status === 200) {
         setMessage("Review submitted successfully!");
         
-        // 💡 সাবমিট হওয়ার ২ সেকেন্ড পর সরাসরি '/my-bookings' পেজে নিয়ে যাবে
+        
         setTimeout(() => router.push('/my-bookings'), 2000);
       }
     } catch (err: any) {
@@ -178,7 +175,7 @@ const GiveReviewContent = () => {
                 </button>
               </div>
 
-              {/* সাকসেস ও এরর মেসেজ টোস্ট */}
+              {/* success & error toast */}
               {message && <div className="p-3 rounded-xl bg-emerald-500/10 text-emerald-400 text-center text-[10px] font-bold uppercase border border-emerald-500/20">✅ {message}</div>}
               {error && <div className="p-3 rounded-xl bg-red-500/10 text-red-400 text-center text-[10px] font-bold uppercase border border-red-500/20">❌ {error}</div>}
             </div>

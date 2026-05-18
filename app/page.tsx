@@ -1,4 +1,4 @@
-'use client';
+
 import Link from 'next/link';
 
 export default function HomePage() {
@@ -6,7 +6,7 @@ export default function HomePage() {
   const theme = {
     bgMain: "#0f172a",       
     primary: "#487be8",     
-    textMuted: "#94a3b8",    
+    textMuted: "#fcfdff",    
     imgOpacity: "0.45"       
   };
 

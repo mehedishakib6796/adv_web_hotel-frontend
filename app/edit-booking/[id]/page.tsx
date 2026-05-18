@@ -9,10 +9,10 @@ const EditBookingPage = () => {
   const { id } = useParams();
   const router = useRouter();
   
-  // আইডি থেকে কোলন (:), স্পেস বা যেকোনো নন-ডিজিট ক্যারেক্টার নিখুঁতভাবে ক্লিন করার লজিক
+  
   const cleanId = typeof id === 'string' ? id.replace(/[^0-9]/g, '') : id;
 
-  // থিম কালার ভ্যারিয়েবলস
+  
   const [accent] = useState("#487be8"); 
   const [bg] = useState("#18142e");     
   const [card] = useState("#111827");   
@@ -103,10 +103,10 @@ const EditBookingPage = () => {
           'Content-Type': 'application/json'
         }
       });
-      setMessage("✅ বুকিং সফলভাবে আপডেট হয়েছে!");
+      setMessage("✅ Booking Update Successfully!");
       setTimeout(() => router.push('/my-bookings'), 2000);
     } catch (err: any) {
-      const errMsg = err.response?.data?.message || "আপডেট ব্যর্থ হয়েছে।";
+      const errMsg = err.response?.data?.message || "Update Failed।";
       setError(Array.isArray(errMsg) ? errMsg[0] : errMsg);
     } finally {
       setLoading(false);
@@ -214,7 +214,7 @@ const EditBookingPage = () => {
                 </button>
               </div>
 
-              {/* এরর এবং সাকসেস মেসেজ */}
+              {/* error & success massege */}
               {message && <div className="text-green-400 text-center text-xs bg-green-500/5 py-3 rounded-xl border border-green-500/10 font-bold uppercase tracking-wider">{message}</div>}
               {error && <div className="text-red-400 text-center text-xs bg-red-500/5 py-3 rounded-xl border border-red-500/10 font-bold uppercase tracking-wider">{error}</div>}
             </form>
