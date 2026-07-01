@@ -1,3 +1,4 @@
+"use client";
 import Link from 'next/link';
 import { Playfair_Display, Inter } from 'next/font/google';
 
@@ -6,6 +7,7 @@ const display = Playfair_Display({
   weight: ['400', '600', '700', '900'],
   variable: '--font-display',
 });
+
 const body = Inter({
   subsets: ['latin'],
   weight: ['300', '400', '500'],
@@ -48,14 +50,16 @@ export default function HomePage() {
             </span>
           </Link>
 
-          <Link
-            href="/login"
-            className="px-7 py-2.5 rounded-full text-sm font-medium uppercase tracking-widest border transition-all duration-300 hover:text-[#05070c]"
-            style={{ borderColor: theme.gold, color: theme.gold }}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = theme.gold)}
-            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
-          >
-            Login
+          {/* ইভেন্ট হ্যান্ডলার ফিক্স করার জন্য কাস্টম স্টাইলড বাটন লিংক */}
+          <Link href="/login" passHref legacyBehavior>
+            <a
+              className="px-7 py-2.5 rounded-full text-sm font-medium uppercase tracking-widest border transition-all duration-300 hover:text-[#05070c]"
+              style={{ borderColor: theme.gold, color: theme.gold }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = theme.gold)}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+            >
+              Login
+            </a>
           </Link>
 
         </div>
