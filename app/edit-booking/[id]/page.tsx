@@ -57,7 +57,8 @@ const EditBookingPage = () => {
     setUserName(name || "User");
     
     if (cleanId) {
-      axios.get(`http://localhost:3000/customer/bookings/${cleanId}`, {
+      // লোকালহোস্ট এপিআই পরিবর্তন করে লাইভ ডেটা ফেচিং ইউআরএল ব্যবহার করা হয়েছে
+      axios.get(`https://adv-web-hotel-backend.vercel.app/customer/bookings/${cleanId}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then(res => {
@@ -97,7 +98,8 @@ const EditBookingPage = () => {
     };
 
     try {
-      await axios.patch(`http://localhost:3000/customer/bookings/${cleanId}`, payload, {
+      // লোকালহোস্ট এপিআই পরিবর্তন করে লাইভ প্যাচ এপিআই এন্ডপয়েন্ট ব্যবহার করা হয়েছে
+      await axios.patch(`https://adv-web-hotel-backend.vercel.app/customer/bookings/${cleanId}`, payload, {
         headers: { 
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -214,7 +216,7 @@ const EditBookingPage = () => {
                 </button>
               </div>
 
-              {/* error & success massege */}
+              {/* error & success message */}
               {message && <div className="text-green-400 text-center text-xs bg-green-500/5 py-3 rounded-xl border border-green-500/10 font-bold uppercase tracking-wider">{message}</div>}
               {error && <div className="text-red-400 text-center text-xs bg-red-500/5 py-3 rounded-xl border border-red-500/10 font-bold uppercase tracking-wider">{error}</div>}
             </form>
