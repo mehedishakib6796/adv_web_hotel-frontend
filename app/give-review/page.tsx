@@ -60,7 +60,8 @@ const GiveReviewContent = () => {
         comment: comment
       };
 
-      const res = await axios.post('http://localhost:3000/customer/reviews', reviewData, {
+      // লোকালহোস্ট এপিআই পরিবর্তন করে লাইভ প্রোডাকশন এপিআই এন্ডপয়েন্ট ব্যবহার করা হয়েছে
+      const res = await axios.post('https://adv-web-hotel-backend.vercel.app/customer/reviews', reviewData, {
         headers: { 
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -124,7 +125,7 @@ const GiveReviewContent = () => {
                 }}
                 className={`w-full p-4 rounded-xl border outline-none text-sm transition-all ${searchParams.get('bookingId') ? 'cursor-not-allowed font-bold' : ''}`}
                 required
-              />
+                />
             </div>
 
             {/* Rating */}
