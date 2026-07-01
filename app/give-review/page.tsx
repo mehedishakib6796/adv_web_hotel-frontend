@@ -20,7 +20,7 @@ const GiveReviewContent = () => {
 
  
   const colors = {
-    pageBg: "#18142e",       
+    pageBg: "#100b2b",       
     cardBg: "#111827",      
     accent: "#487be8",      
     inputBg: "#1f2937",      

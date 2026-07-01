@@ -49,7 +49,7 @@ const MyBookingsPage = () => {
 
   usePusherBeams('global');
 
-  // 🛠️ ক্যানসেলেশনের ফিক্সড ও বুলেটপ্রুফ মেথড
+  
   const handleCancel = async (id: number) => {
     if (!confirm("Are you sure you want to cancel?")) 
       return;
@@ -57,20 +57,20 @@ const MyBookingsPage = () => {
     try {
       const token = localStorage.getItem('access_token');
       
-      // ব্যাকঅ্যান্ড এপিআই-তে ডিলিট রিকোয়েস্ট পাঠানো হচ্ছে
+      
       await axios.delete(`http://localhost:3000/customer/bookings/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
-      // ডিলিট সফল হলে স্টেট ফিল্টার হবে এবং সাকসেস মেসেজ আসবে
+      
       setBookings(prev => prev.filter((b: any) => b.id !== id));
       alert("Booking successfully cancelled!");
 
     } catch (err: any) {
       console.error("Cancellation Error Details:", err);
       
-      // 💡 ব্যাকঅ্যান্ড যদি ডিলিট সফল করার পর খালি রেসপন্স (No Content) দেয়, 
-      // তবে অ্যাক্সিওস যেন ওটাকে এরর না ধরে। তাই এই সেফটি চেক:
+       
+    
       if (!err.response || err.response?.status === 200 || err.response?.status === 204) {
         setBookings(prev => prev.filter((b: any) => b.id !== id));
         alert("Booking successfully cancelled!");

@@ -7,7 +7,7 @@ export default function HomePage() {
     bgMain: "#0f172a",       
     primary: "#487be8",     
     textMuted: "#fcfdff",    
-    imgOpacity: "0.45"       
+    imgOpacity: "0.40"       
   };
 
   return (

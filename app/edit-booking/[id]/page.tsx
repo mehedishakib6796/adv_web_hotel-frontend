@@ -75,7 +75,7 @@ const EditBookingPage = () => {
         }
       })
       .catch((err) => {
-        const msg = err.response?.data?.message || "ডাটা লোড করা যায়নি। আইডি চেক করো।";
+        const msg = err.response?.data?.message || "Data cannot load";
         setError(Array.isArray(msg) ? msg[0] : msg);
       })
       .finally(() => setFetching(false));
