@@ -57,7 +57,6 @@ const EditBookingPage = () => {
     setUserName(name || "User");
     
     if (cleanId) {
-      // লোকালহোস্ট এপিআই পরিবর্তন করে লাইভ ডেটা ফেচিং ইউআরএল ব্যবহার করা হয়েছে
       axios.get(`https://adv-web-hotel-backend.vercel.app/customer/bookings/${cleanId}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
@@ -90,15 +89,17 @@ const EditBookingPage = () => {
     setMessage("");
 
     const token = localStorage.getItem('access_token');
+    
+    // শুধুমাত্র আপডেটযোগ্য ফিল্ডগুলো ব্যাকএন্ডে পাঠানো হচ্ছে 
+    // কাস্টমারের নাম, ইমেইল বা roomId: 0 পাঠানোর কারণে ব্যাকএন্ড ৫০০ এরর দিচ্ছিল
     const payload = {
-      ...formData,
-      roomId: Number(formData.roomId),
+      phoneNumber: formData.phoneNumber,
+      gender: formData.gender,
       checkInDate: toBackendDate(formData.checkInDate),
       checkOutDate: toBackendDate(formData.checkOutDate)
     };
 
     try {
-      // লোকালহোস্ট এপিআই পরিবর্তন করে লাইভ প্যাচ এপিআই এন্ডপয়েন্ট ব্যবহার করা হয়েছে
       await axios.patch(`https://adv-web-hotel-backend.vercel.app/customer/bookings/${cleanId}`, payload, {
         headers: { 
           Authorization: `Bearer ${token}`,
@@ -108,7 +109,7 @@ const EditBookingPage = () => {
       setMessage("✅ Booking Update Successfully!");
       setTimeout(() => router.push('/my-bookings'), 2000);
     } catch (err: any) {
-      const errMsg = err.response?.data?.message || "Update Failed।";
+      const errMsg = err.response?.data?.message || "Update Failed.";
       setError(Array.isArray(errMsg) ? errMsg[0] : errMsg);
     } finally {
       setLoading(false);
