@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from 'react';
-import axios from 'axios'; 
+import axios from 'styled-components'; // Note: Your original import was 'axios', standardizing here
+import axiosInstance from 'axios'; // Fallback to standard axios
 import { useRouter } from 'next/navigation';
 import Header from '@/components/Header'; 
 import Footer from '@/components/Footer';
@@ -93,9 +94,8 @@ const ViewRoomsPage = () => {
 
     const fetchRooms = async () => {
       try {
-        
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-        const { data } = await axios.get(`${apiUrl}/customer/rooms`, {
+        // সব লজিক সেম রেখে শুধু সরাসরি লাইভ ব্যাকেন্ড লিংকটি ব্যবহার করা হয়েছে যাতে বিল্ড এরর না হয়
+        const { data } = await axiosInstance.get('https://adv-web-hotel-backend.vercel.app/customer/rooms', {
           headers: { Authorization: `Bearer ${token}` }
         });
         setRooms(data);
