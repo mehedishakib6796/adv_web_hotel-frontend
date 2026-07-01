@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import Header from '@/components/Header'; 
 import Footer from '@/components/Footer';
 
-
 const THEME = {
   background: "#151e32",
   cardBg: "#171d4c",
@@ -15,14 +14,12 @@ const THEME = {
   accent: "#558ee9"
 };
 
-
 const ROOM_IMAGES = [
   "https://thumbs.dreamstime.com/b/hotel-room-beautiful-orange-sofa-included-43642330.jpg",
   "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=600",
   "https://www.parkregiskriskin.ae/wp-content/uploads/2020/07/room-twin-bed-2520x1400.jpg",
   "https://dq5r178u4t83b.cloudfront.net/wp-content/uploads/sites/125/2020/06/15182916/Sofitel-Dubai-Wafi-Luxury-Room-Bedroom-Skyline-View-Image1_WEB.jpg"
 ];
-
 
 const ROOM_SUBTITLES = [ "Executive Suite","Standard Comfort", "Premium Lounge", "Royal Luxury"];
 
@@ -32,7 +29,6 @@ interface Room {
   price: number; 
 }
 
-
 interface RoomCardProps {
   room: Room;
   index: number;
@@ -40,8 +36,6 @@ interface RoomCardProps {
 }
 
 const RoomCard = ({ room, index, onBook }: RoomCardProps) => {
-  
-
   const imageUrl = ROOM_IMAGES[index % ROOM_IMAGES.length];
   const subTitle = ROOM_SUBTITLES[index % ROOM_SUBTITLES.length];
 
@@ -50,7 +44,6 @@ const RoomCard = ({ room, index, onBook }: RoomCardProps) => {
       style={{ backgroundColor: THEME.cardBg }} 
       className="min-w-[280px] md:min-w-[320px] rounded-2xl overflow-hidden border border-white/5 transition-all duration-300 hover:-translate-y-2 snap-center group shadow-xl"
     >
-      
       <div className="h-44 overflow-hidden relative bg-gray-800">
         <img 
           src={imageUrl} 
@@ -64,7 +57,6 @@ const RoomCard = ({ room, index, onBook }: RoomCardProps) => {
         <p style={{ color: THEME.accent }} className="text-[10px] uppercase tracking-widest font-bold mb-6">
           {subTitle}
         </p>
-        
         
         <div className="mt-auto flex justify-between items-center pt-5 border-t border-white/5">
           <div>
@@ -84,15 +76,12 @@ const RoomCard = ({ room, index, onBook }: RoomCardProps) => {
   );
 };
 
-
-
 const ViewRoomsPage = () => {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState(""); 
   const router = useRouter();
 
- 
   useEffect(() => {
     const token = localStorage.getItem('access_token');
     const name = localStorage.getItem('user_name');
@@ -104,7 +93,9 @@ const ViewRoomsPage = () => {
 
     const fetchRooms = async () => {
       try {
-        const { data } = await axios.get('http://localhost:3000/customer/rooms', {
+        
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+        const { data } = await axios.get(`${apiUrl}/customer/rooms`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setRooms(data);
@@ -120,26 +111,18 @@ const ViewRoomsPage = () => {
 
   return (
     <div style={{ backgroundColor: THEME.background, color: THEME.textMain }} className="min-h-screen flex flex-col font-sans">
-      
-    
       <Header userName={userName} />
       
-   
       <main className="flex-1 w-full py-12 overflow-hidden flex flex-col items-center">
-        
-   
-<div className="mb-12 text-center px-6 w-full max-w-6xl"> 
- 
-  
-  <h1 className="text-3xl md:text-5xl font-bold mb-3 tracking-tight">
-    Available Rooms
-  </h1>
-  
-  <div 
-    style={{ backgroundColor: THEME.primary }} 
-    className="h-1 w-16 mx-auto rounded-full"
-  ></div> 
-</div>
+        <div className="mb-12 text-center px-6 w-full max-w-6xl"> 
+          <h1 className="text-3xl md:text-5xl font-bold mb-3 tracking-tight">
+            Available Rooms
+          </h1>
+          <div 
+            style={{ backgroundColor: THEME.primary }} 
+            className="h-1 w-16 mx-auto rounded-full"
+          ></div> 
+        </div>
 
         {loading ? (
           <div className="flex justify-center py-24">
@@ -150,7 +133,6 @@ const ViewRoomsPage = () => {
           </div>
         ) : (
           <>
-            
             <div className="flex flex-nowrap md:justify-center gap-6 overflow-x-auto px-10 pb-10 no-scrollbar snap-x w-full">
               {rooms.map((room, index) => (
                 <RoomCard 
@@ -162,7 +144,6 @@ const ViewRoomsPage = () => {
               ))}
             </div>
 
-           
             <div className="mt-6 mb-8">
               <button 
                 onClick={() => router.push('/home')}
@@ -177,8 +158,6 @@ const ViewRoomsPage = () => {
       </main>
 
       <Footer />
-
-     
     </div>
   );
 };
