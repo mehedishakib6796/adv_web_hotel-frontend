@@ -5,7 +5,6 @@ import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import Header from '@/components/Header'; 
 import Footer from '@/components/Footer';
 
-
 const DEFAULT_IMAGE = "https://images.unsplash.com/photo-1631049307264-da0ec9d70304";
 const THEME = {
   accent: "#487be8",
@@ -15,14 +14,12 @@ const THEME = {
   input: "#1e2126"
 };
 
-
 const BookRoomContent = () => {
   const { id: roomIdFromUrl } = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialImage = searchParams.get('img');
 
-  
   const [userName, setUserName] = useState(""); 
   const [roomImage, setRoomImage] = useState<string>(initialImage || ""); 
   const [formData, setFormData] = useState({
@@ -33,7 +30,6 @@ const BookRoomContent = () => {
     checkInDate: "", 
     checkOutDate: ""
   });
-
 
   useEffect(() => {
     const name = localStorage.getItem('user_name');
@@ -49,7 +45,8 @@ const BookRoomContent = () => {
     const fetchRoomDetails = async () => {
       if (initialImage) return;
       try {
-        const response = await axios.get(`http://localhost:3000/customer/rooms/${roomIdFromUrl}`, {
+        // রুমের ডিটেইলস নিয়ে আসার জন্য লাইভ এন্ডপয়েন্ট আপডেট করা হয়েছে
+        const response = await axios.get(`https://adv-web-hotel-backend.vercel.app/customer/rooms/${roomIdFromUrl}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setRoomImage(response.data.imageURL || DEFAULT_IMAGE); 
@@ -61,31 +58,29 @@ const BookRoomContent = () => {
     fetchRoomDetails();
   }, [roomIdFromUrl, router, initialImage]);
 
-  
   const handleInput = (e: any) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-
   const handleBooking = async (e: React.FormEvent) => {
     e.preventDefault();
-    const formatDate = (d: string) => d.split('-').reverse().join('-');
     const token = localStorage.getItem('access_token');
 
     try {
       const payload = { 
         ...formData, 
         roomId: Number(roomIdFromUrl), 
-        checkInDate: formatDate(formData.checkInDate), 
-        checkOutDate: formatDate(formData.checkOutDate) 
+        checkInDate: formData.checkInDate, // Standard YYYY-MM-DD format passes smoothly to PostgreSQL
+        checkOutDate: formData.checkOutDate 
       };
 
-      await axios.post('http://localhost:3000/customer/bookings', payload, {
+      // বুকিং রিকোয়েস্ট সরাসরি লাইভ ব্যাকেন্ডে পাঠানোর জন্য আপডেট করা হয়েছে
+      await axios.post('https://adv-web-hotel-backend.vercel.app/customer/bookings', payload, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
       alert("Reservation Confirmed!");
-      router.push('/my-bookings'); 
+      router.push('/home'); // সফল হলে হোম পেজে রিডাইরেক্ট করবে
     } catch (error: any) {
       alert("❌ Error: " + (error.response?.data?.message || "Something went wrong"));
     }
@@ -98,7 +93,6 @@ const BookRoomContent = () => {
       <main className="flex-1 flex items-center justify-center p-4">
         <div className="w-full max-w-4xl rounded-[2rem] overflow-hidden flex flex-col md:flex-row border border-white/5 shadow-2xl transition-all" 
         style={{ backgroundColor: THEME.card }}>
-          
           
           <div className="md:w-5/12 relative flex flex-col justify-end overflow-hidden group min-h-[300px]">
             {roomImage && (
@@ -117,7 +111,6 @@ const BookRoomContent = () => {
             </div>
           </div>
 
-       
           <div className="md:w-7/12 p-8 md:p-10">
             <div className="mb-6">
               <h1 className="text-2xl font-black uppercase tracking-widest" style={{ color: THEME.accent }}>Room Booking</h1>
@@ -126,61 +119,62 @@ const BookRoomContent = () => {
 
             <form onSubmit={handleBooking} className="grid grid-cols-1 md:grid-cols-2 gap-5">
             
-<InputField 
-  label="Full Name" 
-  name="customerName" 
-  val={formData.customerName} 
-  change={handleInput} 
-  full 
-  accent={THEME.accent} 
-  bg={THEME.input} 
-/>
+              <InputField 
+                label="Full Name" 
+                name="customerName" 
+                val={formData.customerName} 
+                change={handleInput} 
+                full 
+                accent={THEME.accent} 
+                bg={THEME.input} 
+              />
 
-<InputField 
-  label="Email Address" 
-  name="email" 
-  type="email" 
-  placeholder="example@mail.com" 
-  change={handleInput} 
-  accent={THEME.accent} 
-  bg={THEME.input} 
-/>
+              <InputField 
+                label="Email Address" 
+                name="email" 
+                type="email" 
+                val={formData.email}
+                placeholder="example@mail.com" 
+                change={handleInput} 
+                accent={THEME.accent} 
+                bg={THEME.input} 
+              />
 
+              <InputField 
+                label="Phone Number" 
+                name="phoneNumber" 
+                val={formData.phoneNumber}
+                placeholder="01XXXXXXXXX" 
+                change={handleInput} 
+                accent={THEME.accent} 
+                bg={THEME.input} 
+              />
 
-<InputField 
-  label="Phone Number" 
-  name="phoneNumber" 
-  placeholder="01XXXXXXXXX" 
-  change={handleInput} 
-  accent={THEME.accent} 
-  bg={THEME.input} 
-/>
+              <InputField 
+                label="Check-in Date" 
+                name="checkInDate" 
+                type="date" 
+                val={formData.checkInDate}
+                change={handleInput} 
+                accent={THEME.accent} 
+                bg={THEME.input} 
+              />
 
+              <InputField 
+                label="Check-out Date" 
+                name="checkOutDate" 
+                type="date" 
+                val={formData.checkOutDate}
+                change={handleInput} 
+                accent={THEME.accent} 
+                bg={THEME.input} 
+              />
 
-<InputField 
-  label="Check-in Date" 
-  name="checkInDate" 
-  type="date" 
-  change={handleInput} 
-  accent={THEME.accent} 
-  bg={THEME.input} 
-/>
-
-
-<InputField 
-  label="Check-out Date" 
-  name="checkOutDate" 
-  type="date" 
-  change={handleInput} 
-  accent={THEME.accent} 
-  bg={THEME.input} 
-/>
               <div className="md:col-span-2 pt-4 flex gap-3">
                 <button type="submit" className="flex-1 font-bold py-4 rounded-xl uppercase text-xs transition-all active:scale-95 shadow-lg" style={{ backgroundColor: THEME.accent, color: "#ffffff" }}>
                   Confirm Now
                 </button>
-                
-            <button type="button" onClick={() => router.back()} className="px-8 border border-white/10 text-[10px] font-bold uppercase rounded-xl hover:bg-white/5 transition-all">
+                <button type="button" onClick={() => router.back()} className="px-8 border border-white/10 text-[10px] font-bold uppercase rounded-xl hover:bg-white/5 transition-all">
                   Back
                 </button>
               </div>
@@ -195,7 +189,6 @@ const BookRoomContent = () => {
   );
 };
 
-
 export default function BookRoomPage() {
   return (
     <Suspense fallback={<div className="h-screen flex items-center justify-center bg-[#18142e] text-white">Loading...</div>}>
@@ -203,7 +196,6 @@ export default function BookRoomPage() {
     </Suspense>
   );
 }
-
 
 const InputField = ({ label, name, type = "text", val, change, full, accent, bg, placeholder = "" }: any) => (
   <div className={`${full ? 'md:col-span-2' : ''} space-y-1.5`}>
