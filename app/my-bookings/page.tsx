@@ -22,9 +22,10 @@ const MyBookingsPage = () => {
   const [userName, setUserName] = useState(""); 
   const router = useRouter();
 
+  // বুকিং ফেচ করার জন্য লাইভ ব্যাকেন্ড ইউআরএল আপডেট করা হয়েছে
   const fetchBookings = useCallback(async (token: string) => {
     try {
-      const res = await axios.get('http://localhost:3000/customer/bookings', {
+      const res = await axios.get('https://adv-web-hotel-backend.vercel.app/customer/bookings', {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = Array.isArray(res.data) ? res.data : (res.data.bookings || []);
@@ -49,7 +50,7 @@ const MyBookingsPage = () => {
 
   usePusherBeams('global');
 
-  
+  // বুকিং ক্যানসেল করার জন্য লাইভ ব্যাকেন্ড ইউআরএল আপডেট করা হয়েছে
   const handleCancel = async (id: number) => {
     if (!confirm("Are you sure you want to cancel?")) 
       return;
@@ -57,11 +58,9 @@ const MyBookingsPage = () => {
     try {
       const token = localStorage.getItem('access_token');
       
-      
-      await axios.delete(`http://localhost:3000/customer/bookings/${id}`, {
+      await axios.delete(`https://adv-web-hotel-backend.vercel.app/customer/bookings/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      
       
       setBookings(prev => prev.filter((b: any) => b.id !== id));
       alert("Booking successfully cancelled!");
@@ -69,8 +68,6 @@ const MyBookingsPage = () => {
     } catch (err: any) {
       console.error("Cancellation Error Details:", err);
       
-       
-    
       if (!err.response || err.response?.status === 200 || err.response?.status === 204) {
         setBookings(prev => prev.filter((b: any) => b.id !== id));
         alert("Booking successfully cancelled!");
@@ -107,77 +104,82 @@ const MyBookingsPage = () => {
           <div className="flex justify-center py-20 animate-spin text-2xl" style={{ color: theme.accentColor }}>◌</div>
         ) : (
           <div className="space-y-6">
-            {bookings.map((booking: any) => (
-
-              <div key={booking.id} style={{ backgroundColor: theme.cardColor }}
-               className="group rounded-3xl p-6 flex flex-col md:flex-row items-center gap-10 border border-white/5 hover:scale-105 transition-all duration-500">
-                
-                <div style={{ backgroundColor: theme.roomBoxColor }} 
-                className="w-full md:w-56 h-40 rounded-2xl flex flex-col items-center justify-center shrink-0 border border-white/5 group-hover:bg-indigo-600 transition-colors duration-500">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 group-hover:text-white/60 mb-1">Room</span>
-                  <span className="text-5xl font-black text-white italic tracking-tighter">#{booking.room?.id || '0'}</span>
-                </div>
-
-                <div className="flex-1 w-full space-y-6">
-                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                    <div>
-                      <h2 className="text-2xl font-black text-white uppercase tracking-tight mb-2">
-                        {booking.room?.name || "Exclusive Suite"}
-                      </h2>
-                      <div className="flex items-center gap-3">
-                        <span className={`text-[10px] font-black uppercase px-3 py-1 rounded-md border ${getStatusStyle(booking.status)}`}>
-                          {booking.status}
-                        </span>
-                        <span style={{ color: theme.accentColor }} className="text-[10px] font-black uppercase tracking-widest bg-white/5 px-2 py-1 rounded">
-                          Guest: {userName}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="md:text-right">
-                       <span className="text-4xl font-black text-white tracking-tighter">${booking.room?.price || '0'}</span>
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-8 py-5 border-t border-white/5">
-                    {[
-                      { label: "Check-In", val: booking.checkInDate },
-                      { label: "Check-Out", val: booking.checkOutDate },
-                      { label: "Email Address", val: booking.email },
-                      { label: "Contact No", val: booking.phoneNumber },
-                    ].map((item, i) => (
-                      <div key={i}>
-                        <p className="text-[9px] text-slate-600 font-black uppercase tracking-widest mb-1">{item.label}</p>
-                        <p className="text-sm font-bold text-slate-200 truncate">{item.val}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="flex md:flex-col gap-3 w-full md:w-48 shrink-0">
-                  <button 
-                    onClick={() => router.push(`/give-review?bookingId=${booking.id}`)} 
-                    className={`${btnBase} bg-white text-black border-transparent hover:opacity-90`}
-                  >
-                    Give Review
-                  </button>
-                  
-                  <button 
-                    onClick={() => router.push(`/edit-booking/${booking.id}`)} 
-                    className={`${btnBase} bg-white text-black border-transparent hover:opacity-90`}
-                  >
-                    Modify
-                  </button>
-                  
-                  <button 
-                    onClick={() => handleCancel(booking.id)} 
-                    className={`${btnBase} bg-white text-black border-transparent hover:opacity-90`}
-                  >
-                    Cancel Booking
-                  </button>
-                </div>
-
+            {bookings.length === 0 ? (
+              <div className="text-center py-20 text-slate-500 font-bold">
+                No bookings found.
               </div>
-            ))}
+            ) : (
+              bookings.map((booking: any) => (
+                <div key={booking.id} style={{ backgroundColor: theme.cardColor }}
+                 className="group rounded-3xl p-6 flex flex-col md:flex-row items-center gap-10 border border-white/5 hover:scale-105 transition-all duration-500">
+                  
+                  <div style={{ backgroundColor: theme.roomBoxColor }} 
+                  className="w-full md:w-56 h-40 rounded-2xl flex flex-col items-center justify-center shrink-0 border border-white/5 group-hover:bg-indigo-600 transition-colors duration-500">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 group-hover:text-white/60 mb-1">Room</span>
+                    <span className="text-5xl font-black text-white italic tracking-tighter">#{booking.room?.id || '0'}</span>
+                  </div>
+
+                  <div className="flex-1 w-full space-y-6">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                      <div>
+                        <h2 className="text-2xl font-black text-white uppercase tracking-tight mb-2">
+                          {booking.room?.name || "Exclusive Suite"}
+                        </h2>
+                        <div className="flex items-center gap-3">
+                          <span className={`text-[10px] font-black uppercase px-3 py-1 rounded-md border ${getStatusStyle(booking.status || 'pending')}`}>
+                            {booking.status || 'Pending'}
+                          </span>
+                          <span style={{ color: theme.accentColor }} className="text-[10px] font-black uppercase tracking-widest bg-white/5 px-2 py-1 rounded">
+                            Guest: {userName}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="md:text-right">
+                         <span className="text-4xl font-black text-white tracking-tighter">${booking.room?.price || '0'}</span>
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8 py-5 border-t border-white/5">
+                      {[
+                        { label: "Check-In", val: booking.checkInDate },
+                        { label: "Check-Out", val: booking.checkOutDate },
+                        { label: "Email Address", val: booking.email },
+                        { label: "Contact No", val: booking.phoneNumber },
+                      ].map((item, i) => (
+                        <div key={i}>
+                          <p className="text-[9px] text-slate-600 font-black uppercase tracking-widest mb-1">{item.label}</p>
+                          <p className="text-sm font-bold text-slate-200 truncate">{item.val || "N/A"}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex md:flex-col gap-3 w-full md:w-48 shrink-0">
+                    <button 
+                      onClick={() => router.push(`/give-review?bookingId=${booking.id}`)} 
+                      className={`${btnBase} bg-white text-black border-transparent hover:opacity-90`}
+                    >
+                      Give Review
+                    </button>
+                    
+                    <button 
+                      onClick={() => router.push(`/edit-booking/${booking.id}`)} 
+                      className={`${btnBase} bg-white text-black border-transparent hover:opacity-90`}
+                    >
+                      Modify
+                    </button>
+                    
+                    <button 
+                      onClick={() => handleCancel(booking.id)} 
+                      className={`${btnBase} bg-white text-black border-transparent hover:opacity-90`}
+                    >
+                      Cancel Booking
+                    </button>
+                  </div>
+
+                </div>
+              ))
+            )}
           </div>
         )}
 
