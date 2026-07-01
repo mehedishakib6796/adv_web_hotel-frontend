@@ -45,7 +45,6 @@ const BookRoomContent = () => {
     const fetchRoomDetails = async () => {
       if (initialImage) return;
       try {
-        // রুমের ডিটেইলস নিয়ে আসার জন্য লাইভ এন্ডপয়েন্ট আপডেট করা হয়েছে
         const response = await axios.get(`https://adv-web-hotel-backend.vercel.app/customer/rooms/${roomIdFromUrl}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
@@ -66,21 +65,27 @@ const BookRoomContent = () => {
     e.preventDefault();
     const token = localStorage.getItem('access_token');
 
+    // YYYY-MM-DD ফরম্যাটকে ব্যাকএন্ডের রিকোয়ারমেন্ট অনুযায়ী DD-MM-YYYY তে রূপান্তর করার ফাংশন
+    const formatDateForBackend = (dateString: string) => {
+      if (!dateString) return "";
+      const [year, month, day] = dateString.split('-');
+      return `${day}-${month}-${year}`;
+    };
+
     try {
       const payload = { 
         ...formData, 
         roomId: Number(roomIdFromUrl), 
-        checkInDate: formData.checkInDate, // Standard YYYY-MM-DD format passes smoothly to PostgreSQL
-        checkOutDate: formData.checkOutDate 
+        checkInDate: formatDateForBackend(formData.checkInDate), // DD-MM-YYYY ফরম্যাটে কনভার্ট হলো
+        checkOutDate: formatDateForBackend(formData.checkOutDate) // DD-MM-YYYY ফরম্যাটে কনভার্ট হলো
       };
 
-      // বুকিং রিকোয়েস্ট সরাসরি লাইভ ব্যাকেন্ডে পাঠানোর জন্য আপডেট করা হয়েছে
       await axios.post('https://adv-web-hotel-backend.vercel.app/customer/bookings', payload, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      alert("Reservation Confirmed!");
-      router.push('/home'); // সফল হলে হোম পেজে রিডাইরেক্ট করবে
+      alert("🎉 Reservation Confirmed successfully!");
+      router.push('/home'); 
     } catch (error: any) {
       alert("❌ Error: " + (error.response?.data?.message || "Something went wrong"));
     }
