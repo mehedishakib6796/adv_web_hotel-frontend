@@ -129,110 +129,114 @@ const ProfilePage = () => {
     );
   }
 
-  const fields = [
-    { label: "Full Name", icon: User, value: user.name, editable: true, key: "name" as const },
-    { label: "Email Address", icon: Mail, value: user.email, editable: false, key: "email" as const },
-    { label: "Phone Number", icon: Phone, value: user.phone, editable: true, key: "phone" as const },
+  const infoFields = [
+    { label: "Full Name", icon: User, value: user.name, editable: true, key: "name" as const, placeholder: "Enter your name" },
+    { label: "Phone Number", icon: Phone, value: user.phone, editable: true, key: "phone" as const, placeholder: "Enter phone number" },
+    { label: "Email Address", icon: Mail, value: user.email, editable: false, key: "email" as const, placeholder: "" },
   ];
 
   return (
     <div style={{ backgroundColor: theme.background }} className="flex flex-col min-h-screen text-white font-sans selection:bg-cyan-500/30">
       <Header userName={user.name} />
 
-      <main className="flex-grow w-full z-10">
+      <main className="flex-grow w-full mx-auto px-6 py-12 md:py-16 z-10 max-w-3xl">
 
-        {/* Top banner strip with back button */}
-        <div className={`border-b ${theme.border} px-6 py-4`}>
-          <div className="max-w-5xl mx-auto flex items-center justify-between">
-            <span style={{ color: theme.textMuted }} className="text-xs font-bold uppercase tracking-[0.25em]">
-              Account
-            </span>
-            <button
-              onClick={() => router.push('/home')}
-              className="inline-flex items-center justify-center gap-2 bg-zinc-900/60 hover:bg-zinc-900 border border-zinc-800/80 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider text-zinc-400 hover:text-white transition-all active:scale-[0.98]"
-            >
-              <ArrowLeft className="w-4 h-4" /> Back
-            </button>
-          </div>
+        {/* Top nav row */}
+        <div className="flex items-center justify-between gap-6 mb-8">
+          <span style={{ color: theme.textMuted }} className="text-xs font-bold uppercase tracking-[0.25em] opacity-70">
+            My Account
+          </span>
+          <button
+            onClick={() => router.push('/home')}
+            className="inline-flex items-center justify-center gap-2 bg-zinc-900/60 hover:bg-zinc-900 border border-zinc-800/80 px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider text-zinc-400 hover:text-white transition-all active:scale-[0.98]"
+          >
+            <ArrowLeft className="w-4 h-4" /> Back
+          </button>
         </div>
 
-        {/* Hero identity banner */}
+        {/* Single unified card */}
         <div
-          style={{ background: `linear-gradient(135deg, ${theme.cardBg} 0%, ${theme.background} 100%)` }}
-          className="w-full px-6 pt-14 pb-20 relative overflow-hidden"
+          style={{ backgroundColor: theme.cardBg + "33" }}
+          className="relative border border-white/[0.04] rounded-3xl overflow-hidden shadow-2xl shadow-black/20"
         >
+          {/* subtle glow accent */}
           <div
             style={{ backgroundColor: theme.accent }}
-            className="absolute -top-24 -right-24 w-72 h-72 rounded-full opacity-10 blur-3xl"
+            className="absolute -top-32 left-1/2 -translate-x-1/2 w-96 h-64 rounded-full opacity-[0.08] blur-3xl pointer-events-none"
           />
-          <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center sm:items-end gap-6 relative">
-            <div className="relative w-28 h-28 shrink-0">
+
+          {/* Centered identity block */}
+          <div className={`relative flex flex-col items-center text-center px-8 pt-12 pb-8 border-b ${theme.border}`}>
+            <div className="relative w-24 h-24 mb-5">
               <div
                 style={{ background: `linear-gradient(to right, ${theme.accent}, ${theme.accent}aa)` }}
-                className="absolute -inset-1 rounded-full blur opacity-40"
+                className="absolute -inset-1 rounded-full blur opacity-30"
               />
               <div
                 style={{ color: theme.accent }}
-                className="relative w-full h-full bg-zinc-950 rounded-full flex items-center justify-center text-4xl font-black select-none border border-white/10"
+                className="relative w-full h-full bg-zinc-950 rounded-full flex items-center justify-center text-3xl font-black select-none border border-white/10 ring-2 ring-white/[0.03]"
               >
                 {user.name ? user.name.charAt(0).toUpperCase() : "U"}
               </div>
             </div>
 
-            <div className="text-center sm:text-left flex-grow">
-              <h1 className="text-3xl md:text-4xl font-black tracking-tight text-white">{user.name}</h1>
-              <div
-                style={{ backgroundColor: theme.accent + "0d", borderColor: theme.accent + "1a" }}
-                className="inline-flex items-center gap-1.5 mt-3 px-3 py-1 rounded-full border"
-              >
-                <ShieldCheck style={{ color: theme.accent }} className="w-3.5 h-3.5" />
-                <span style={{ color: theme.accent }} className="text-[10px] font-bold tracking-widest uppercase">
-                  {user.role}
-                </span>
-              </div>
+            <h1 className="text-2xl md:text-3xl font-black tracking-tight text-white">{user.name}</h1>
+
+            <div
+              style={{ backgroundColor: theme.accent + "0d", borderColor: theme.accent + "1a" }}
+              className="inline-flex items-center gap-1.5 mt-3 px-3 py-1 rounded-full border"
+            >
+              <ShieldCheck style={{ color: theme.accent }} className="w-3.5 h-3.5" />
+              <span style={{ color: theme.accent }} className="text-[10px] font-bold tracking-widest uppercase">
+                {user.role}
+              </span>
             </div>
 
             {!isEditing && (
               <button
                 onClick={() => setIsEditing(true)}
-                style={{ backgroundColor: theme.accent, color: "black" }}
-                className="inline-flex items-center gap-1.5 font-extrabold px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all active:scale-[0.98] shrink-0"
+                style={{ color: theme.accent }}
+                className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider mt-6 hover:opacity-80 transition-opacity"
               >
-                <Edit3 className="w-3.5 h-3.5" /> Edit Info
+                <Edit3 className="w-3.5 h-3.5" /> Edit Profile
               </button>
             )}
           </div>
-        </div>
 
-        {/* Info rows, pulled up over the banner */}
-        <div className="max-w-5xl mx-auto px-6 -mt-10 pb-16">
-          <div
-            style={{ backgroundColor: theme.cardBg + "4d" }}
-            className="border border-white/[0.02] rounded-2xl divide-y divide-white/[0.04] overflow-hidden"
-          >
-            {fields.map((field) => {
+          {/* Info list */}
+          <div className="px-6 md:px-8 py-8 space-y-4">
+            {infoFields.map((field) => {
               const Icon = field.icon;
+              const isThisEditable = isEditing && field.editable;
               return (
-                <div key={field.key} className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-8 px-6 md:px-8 py-6">
-                  <span style={{ color: theme.textMuted }} className="text-xs font-bold uppercase tracking-widest w-36 shrink-0">
-                    {field.label}
-                  </span>
+                <div
+                  key={field.key}
+                  style={{ backgroundColor: "rgba(255,255,255,0.02)" }}
+                  className="flex items-center gap-4 px-5 py-4 rounded-2xl border border-white/[0.03]"
+                >
+                  <div
+                    style={{ backgroundColor: theme.accent + "12", color: theme.accent }}
+                    className="w-10 h-10 shrink-0 rounded-xl flex items-center justify-center"
+                  >
+                    <Icon className="w-4.5 h-4.5" />
+                  </div>
 
-                  <div className="flex-grow">
-                    {isEditing && field.editable ? (
+                  <div className="flex-grow min-w-0">
+                    <p style={{ color: theme.textMuted }} className="text-[10px] font-bold uppercase tracking-widest opacity-60 mb-1">
+                      {field.label}
+                    </p>
+                    {isThisEditable ? (
                       <input
                         type="text"
                         value={field.key === "name" ? newName : newPhone}
                         onChange={(e) =>
                           field.key === "name" ? setNewName(e.target.value) : setNewPhone(e.target.value)
                         }
-                        placeholder={field.key === "phone" ? "Enter phone number" : undefined}
-                        className={`bg-zinc-950/80 border ${theme.border} focus:border-cyan-500/40 px-4 py-2.5 rounded-xl w-full max-w-sm text-white outline-none text-sm font-medium transition-all`}
+                        placeholder={field.placeholder}
+                        className={`bg-zinc-950/80 border ${theme.border} focus:border-cyan-500/40 px-3 py-2 rounded-lg w-full text-white outline-none text-sm font-semibold transition-all`}
                       />
                     ) : (
-                      <span className="text-base font-semibold text-zinc-200 flex items-center gap-2">
-                        <Icon className="w-4 h-4 text-zinc-600" /> {field.value}
-                      </span>
+                      <p className="text-sm md:text-base font-semibold text-zinc-100 truncate">{field.value}</p>
                     )}
                   </div>
                 </div>
@@ -240,12 +244,12 @@ const ProfilePage = () => {
             })}
           </div>
 
-          {/* Action buttons */}
+          {/* Action footer */}
           {isEditing && (
-            <div className="mt-6 flex items-center justify-end gap-3">
+            <div className={`px-6 md:px-8 pb-8 pt-2 flex items-center justify-end gap-3 border-t ${theme.border} mt-2`}>
               <button
                 onClick={() => setIsEditing(false)}
-                className="px-4 py-2 text-zinc-400 hover:text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors flex items-center gap-1"
+                className="px-4 py-2.5 text-zinc-400 hover:text-white text-xs font-bold uppercase tracking-wider rounded-xl transition-colors flex items-center gap-1"
               >
                 <X className="w-3.5 h-3.5" /> Cancel
               </button>
@@ -253,7 +257,7 @@ const ProfilePage = () => {
                 onClick={handleUpdateProfile}
                 disabled={loading}
                 style={{ backgroundColor: theme.accent, color: "black" }}
-                className="font-extrabold px-5 py-2 rounded-xl transition-all text-xs uppercase tracking-wider flex items-center gap-1.5 disabled:opacity-50"
+                className="font-extrabold px-5 py-2.5 rounded-xl transition-all text-xs uppercase tracking-wider flex items-center gap-1.5 disabled:opacity-50 active:scale-[0.98]"
               >
                 <Check className="w-3.5 h-3.5" /> {loading ? "Saving..." : "Save Changes"}
               </button>
