@@ -129,134 +129,139 @@ const ProfilePage = () => {
     );
   }
 
+  const fields = [
+    { label: "Full Name", icon: User, value: user.name, editable: true, key: "name" as const },
+    { label: "Email Address", icon: Mail, value: user.email, editable: false, key: "email" as const },
+    { label: "Phone Number", icon: Phone, value: user.phone, editable: true, key: "phone" as const },
+  ];
+
   return (
     <div style={{ backgroundColor: theme.background }} className="flex flex-col min-h-screen text-white font-sans selection:bg-cyan-500/30">
       <Header userName={user.name} />
-      
-      <main className="flex-grow max-w-5xl w-full mx-auto px-6 py-12 md:py-16 z-10">
 
-       
-        <div className={`flex items-center justify-between gap-6 mb-12 pb-4 border-b ${theme.border}`}>
-          <h1 className="text-3xl md:text-4xl font-black tracking-tight text-white">Profile</h1>
-          <button 
-            onClick={() => router.push('/home')} 
-            className="inline-flex items-center justify-center gap-2 bg-zinc-900/60 hover:bg-zinc-900 border border-zinc-800/80 px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider text-zinc-400 hover:text-white transition-all active:scale-[0.98]"
-          >
-            <ArrowLeft className="w-4 h-4"/> Back to Home
-          </button>
+      <main className="flex-grow w-full z-10">
+
+        {/* Top banner strip with back button */}
+        <div className={`border-b ${theme.border} px-6 py-4`}>
+          <div className="max-w-5xl mx-auto flex items-center justify-between">
+            <span style={{ color: theme.textMuted }} className="text-xs font-bold uppercase tracking-[0.25em]">
+              Account
+            </span>
+            <button
+              onClick={() => router.push('/home')}
+              className="inline-flex items-center justify-center gap-2 bg-zinc-900/60 hover:bg-zinc-900 border border-zinc-800/80 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider text-zinc-400 hover:text-white transition-all active:scale-[0.98]"
+            >
+              <ArrowLeft className="w-4 h-4" /> Back
+            </button>
+          </div>
         </div>
 
-        {/* মেইন গ্রিড কন্টেন্ট */}
-        <div className="w-full grid grid-cols-2 lg:grid-cols-12 gap-10 items-start">
-          
-          {/* Left Side Avatar Card */}
-          <div style={{ backgroundColor: theme.cardBg + "99" }}
-           className="lg:col-span-4 border border-white/[0.03] p-8 rounded-2xl flex flex-col items-center text-center">
-            <div className="relative w-24 h-24 mb-5">
-              <div style={{ background: `linear-gradient(to right, ${theme.accent}, ${theme.accent + "aa"})` }}
-               className="absolute -inset-1 rounded-full blur opacity-30"></div>
-              <div style={{ color: theme.accent, borderColor: theme.border }}
-               className="relative w-full h-full bg-zinc-950 rounded-full flex items-center justify-center text-3xl font-black select-none border">
+        {/* Hero identity banner */}
+        <div
+          style={{ background: `linear-gradient(135deg, ${theme.cardBg} 0%, ${theme.background} 100%)` }}
+          className="w-full px-6 pt-14 pb-20 relative overflow-hidden"
+        >
+          <div
+            style={{ backgroundColor: theme.accent }}
+            className="absolute -top-24 -right-24 w-72 h-72 rounded-full opacity-10 blur-3xl"
+          />
+          <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center sm:items-end gap-6 relative">
+            <div className="relative w-28 h-28 shrink-0">
+              <div
+                style={{ background: `linear-gradient(to right, ${theme.accent}, ${theme.accent}aa)` }}
+                className="absolute -inset-1 rounded-full blur opacity-40"
+              />
+              <div
+                style={{ color: theme.accent }}
+                className="relative w-full h-full bg-zinc-950 rounded-full flex items-center justify-center text-4xl font-black select-none border border-white/10"
+              >
                 {user.name ? user.name.charAt(0).toUpperCase() : "U"}
               </div>
             </div>
-            <h2 className="text-xl font-bold truncate max-w-full text-white">{user.name}</h2>
-            <div style={{ backgroundColor: theme.accent + "0d", borderColor: theme.accent + "1a" }} className="inline-flex items-center gap-1.5 mt-3 px-3 py-1 rounded-full border">
-              <ShieldCheck style={{ color: theme.accent }} className="w-3.5 h-3.5" /> 
-              <span style={{ color: theme.accent }} className="text-[10px] font-bold tracking-widest uppercase">{user.role}</span>
-            </div>
-          </div>
 
-          {/* Right Side Information Card */}
-          <div style={{ backgroundColor: theme.cardBg + "4d" }} className="lg:col-span-8 border border-white/[0.02] p-8 md:p-10 rounded-2xl">
-            <div className={`flex items-center justify-between mb-8 pb-3 border-b ${theme.border}`}>
-              <h3 style={{ color: theme.textMuted }} className="font-bold text-xs uppercase tracking-widest">Personal Information</h3>
-              {!isEditing && (
-                <button 
-                  onClick={() => setIsEditing(true)} 
-                  style={{ color: theme.accent }}
-                  className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider transition-colors"
-                >
-                  <Edit3 className="w-3.5 h-3.5"/> Edit Info
-                </button>
-              )}
-            </div>
-
-            <div className="space-y-8">
-              {/* Full Name */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-6 py-2">
-                <span style={{ color: theme.textMuted }} className="text-xs font-bold uppercase tracking-widest w-32">Full Name</span>
-                <div className="flex-grow">
-                  {isEditing ? (
-                    <input 
-                      type="text" 
-                      value={newName} 
-                      onChange={(e) => setNewName(e.target.value)} 
-                      className={`bg-zinc-950/80 border ${theme.border} focus:border-cyan-500/40 px-4 py-2.5 rounded-xl w-full text-white outline-none text-sm font-medium transition-all`}
-                    />
-                  ) : (
-                    <span className="text-base font-semibold text-zinc-200 flex items-center gap-2">
-                      <User className="w-4 h-4 text-zinc-600" /> {user.name}
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              {/* Email Address */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-6 py-2">
-                <span style={{ color: theme.textMuted }} className="text-xs font-bold uppercase tracking-widest w-32">Email Address</span>
-                <div className="flex-grow">
-                  <span style={{ color: theme.textMuted }} className="text-base font-semibold flex items-center gap-2 select-all">
-                    <Mail className="w-4 h-4 text-zinc-600" /> {user.email}
-                  </span>
-                </div>
-              </div>
-
-              {/* Phone Number */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-6 py-2">
-                <span style={{ color: theme.textMuted }} className="text-xs font-bold uppercase tracking-widest w-32">Phone Number</span>
-                <div className="flex-grow">
-                  {isEditing ? (
-                    <input 
-                      type="text" 
-                      value={newPhone} 
-                      onChange={(e) => setNewPhone(e.target.value)} 
-                      className={`bg-zinc-950/80 border ${theme.border} focus:border-cyan-500/40 px-4 py-2.5 rounded-xl w-full text-white outline-none text-sm font-medium transition-all`}
-                      placeholder="Enter phone number"
-                    />
-                  ) : (
-                    <span className="text-base font-semibold text-zinc-200 flex items-center gap-2">
-                      <Phone className="w-4 h-4 text-zinc-600" /> {user.phone}
-                    </span>
-                  )}
-                </div>
+            <div className="text-center sm:text-left flex-grow">
+              <h1 className="text-3xl md:text-4xl font-black tracking-tight text-white">{user.name}</h1>
+              <div
+                style={{ backgroundColor: theme.accent + "0d", borderColor: theme.accent + "1a" }}
+                className="inline-flex items-center gap-1.5 mt-3 px-3 py-1 rounded-full border"
+              >
+                <ShieldCheck style={{ color: theme.accent }} className="w-3.5 h-3.5" />
+                <span style={{ color: theme.accent }} className="text-[10px] font-bold tracking-widest uppercase">
+                  {user.role}
+                </span>
               </div>
             </div>
 
-            {/* Action Button (cancel & save) */}
-            {isEditing && (
-              <div className={`mt-10 pt-6 border-t ${theme.border} flex items-center justify-end gap-3`}>
-                <button 
-                  onClick={() => setIsEditing(false)} 
-                  className="px-4 py-2 text-zinc-400 hover:text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors flex items-center gap-1"
-                >
-                  <X className="w-3.5 h-3.5"/> Cancel
-                </button>
-                <button 
-                  onClick={handleUpdateProfile} 
-                  disabled={loading} 
-                  style={{ backgroundColor: theme.accent, color: "black" }}
-                  className="font-extrabold px-5 py-2 rounded-xl transition-all text-xs uppercase tracking-wider flex items-center gap-1.5 disabled:opacity-50"
-                > 
-                  <Check className="w-3.5 h-3.5"/> {loading ? "Saving..." : "Save Changes"} 
-                </button>
-              </div>
+            {!isEditing && (
+              <button
+                onClick={() => setIsEditing(true)}
+                style={{ backgroundColor: theme.accent, color: "black" }}
+                className="inline-flex items-center gap-1.5 font-extrabold px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all active:scale-[0.98] shrink-0"
+              >
+                <Edit3 className="w-3.5 h-3.5" /> Edit Info
+              </button>
             )}
-
           </div>
         </div>
+
+        {/* Info rows, pulled up over the banner */}
+        <div className="max-w-5xl mx-auto px-6 -mt-10 pb-16">
+          <div
+            style={{ backgroundColor: theme.cardBg + "4d" }}
+            className="border border-white/[0.02] rounded-2xl divide-y divide-white/[0.04] overflow-hidden"
+          >
+            {fields.map((field) => {
+              const Icon = field.icon;
+              return (
+                <div key={field.key} className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-8 px-6 md:px-8 py-6">
+                  <span style={{ color: theme.textMuted }} className="text-xs font-bold uppercase tracking-widest w-36 shrink-0">
+                    {field.label}
+                  </span>
+
+                  <div className="flex-grow">
+                    {isEditing && field.editable ? (
+                      <input
+                        type="text"
+                        value={field.key === "name" ? newName : newPhone}
+                        onChange={(e) =>
+                          field.key === "name" ? setNewName(e.target.value) : setNewPhone(e.target.value)
+                        }
+                        placeholder={field.key === "phone" ? "Enter phone number" : undefined}
+                        className={`bg-zinc-950/80 border ${theme.border} focus:border-cyan-500/40 px-4 py-2.5 rounded-xl w-full max-w-sm text-white outline-none text-sm font-medium transition-all`}
+                      />
+                    ) : (
+                      <span className="text-base font-semibold text-zinc-200 flex items-center gap-2">
+                        <Icon className="w-4 h-4 text-zinc-600" /> {field.value}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Action buttons */}
+          {isEditing && (
+            <div className="mt-6 flex items-center justify-end gap-3">
+              <button
+                onClick={() => setIsEditing(false)}
+                className="px-4 py-2 text-zinc-400 hover:text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors flex items-center gap-1"
+              >
+                <X className="w-3.5 h-3.5" /> Cancel
+              </button>
+              <button
+                onClick={handleUpdateProfile}
+                disabled={loading}
+                style={{ backgroundColor: theme.accent, color: "black" }}
+                className="font-extrabold px-5 py-2 rounded-xl transition-all text-xs uppercase tracking-wider flex items-center gap-1.5 disabled:opacity-50"
+              >
+                <Check className="w-3.5 h-3.5" /> {loading ? "Saving..." : "Save Changes"}
+              </button>
+            </div>
+          )}
+        </div>
       </main>
-      
+
       <Footer />
     </div>
   );
