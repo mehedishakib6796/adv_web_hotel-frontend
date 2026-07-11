@@ -3,28 +3,14 @@ import { useState } from 'react';
 import api from '../../lib/api';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Playfair_Display, Inter } from 'next/font/google';
-
-const display = Playfair_Display({
-  subsets: ['latin'],
-  weight: ['400', '600', '700', '900'],
-  variable: '--font-display',
-});
-
-const body = Inter({
-  subsets: ['latin'],
-  weight: ['300', '400', '500'],
-  variable: '--font-body',
-});
 
 const theme = {
-  bgMain: "#0b0f1a",
-  bgDeep: "#05070c",
-  bgCard: "#10151f",
-  bgInput: "#05070c",
-  gold: "#c9a25b",
-  goldSoft: "#e8d6ab",
-  textMuted: "#cbd2e0",
+  bgMain: "#0f172a",
+  primary: "#487be8",
+  textMuted: "#94a3b8",
+  cardBg: "#111827",
+  inputBg: "#0f172a",
+  border: "rgba(72,123,232,0.25)",
   errorBg: "rgba(136,41,41,0.35)",
   errorText: "#f2a9a9",
   successBg: "rgba(43,110,80,0.3)",
@@ -76,25 +62,22 @@ export default function SignupPage() {
 
   return (
     <div
-      className={`${display.variable} ${body.variable} h-screen w-screen text-white flex flex-col antialiased overflow-hidden relative`}
-      style={{ backgroundColor: theme.bgMain, fontFamily: 'var(--font-body)' }}
+      style={{ backgroundColor: theme.bgMain }}
+      className="h-screen w-screen text-white flex flex-col font-sans antialiased overflow-hidden relative"
     >
 
       {/* Header — same as homepage */}
-      <header className="fixed top-0 left-0 w-full z-50 bg-[#05070c]/70 backdrop-blur-md border-b" style={{ borderColor: 'rgba(201,162,91,0.2)' }}>
+      <header className="fixed top-0 left-0 w-full z-50 bg-[#0f172a]/70 backdrop-blur-md border-b" style={{ borderColor: theme.border }}>
         <div className="max-w-full mx-auto px-6 md:px-16 h-20 flex items-center justify-between">
           <Link href="/home" className="flex items-center gap-3 select-none group">
             <span
-              className="w-10 h-10 flex items-center justify-center rounded-full border text-sm tracking-widest"
-              style={{ borderColor: theme.gold, color: theme.gold, fontFamily: 'var(--font-display)' }}
+              className="w-10 h-10 flex items-center justify-center rounded-full border text-sm font-bold tracking-widest"
+              style={{ borderColor: theme.primary, color: theme.primary }}
             >
               HR
             </span>
-            <span
-              className="text-xl md:text-2xl uppercase tracking-[0.2em] font-semibold"
-              style={{ fontFamily: 'var(--font-display)' }}
-            >
-              Hotel <span style={{ color: theme.gold }}>Royal</span>
+            <span className="text-xl md:text-2xl font-black tracking-tighter">
+              Hotel <span style={{ color: theme.primary }}>Royal</span>
             </span>
           </Link>
         </div>
@@ -102,7 +85,7 @@ export default function SignupPage() {
 
       <main className="flex-grow flex items-center justify-center px-4 md:px-6 pt-20 pb-16">
         <div
-          style={{ backgroundColor: theme.bgCard, borderColor: 'rgba(201,162,91,0.25)' }}
+          style={{ backgroundColor: theme.cardBg, borderColor: theme.border }}
           className="w-full max-w-5xl flex flex-col md:flex-row rounded-3xl shadow-2xl overflow-hidden border max-h-[82vh]"
         >
 
@@ -114,17 +97,11 @@ export default function SignupPage() {
               style={{ opacity: 0.55 }}
               alt="Signup Visual"
             />
-            <div className="absolute inset-0" style={{ background: `linear-gradient(to right, transparent, ${theme.bgCard})` }} />
+            <div className="absolute inset-0" style={{ background: `linear-gradient(to right, transparent, ${theme.cardBg})` }} />
             <div className="absolute bottom-10 left-10 right-10">
-              <div className="flex items-center gap-4 mb-4">
-                <span className="h-px w-10" style={{ backgroundColor: theme.gold }} />
-                <span className="w-1.5 h-1.5 rotate-45" style={{ backgroundColor: theme.gold }} />
-              </div>
-              <p
-                className="text-2xl leading-snug"
-                style={{ fontFamily: 'var(--font-display)', color: theme.goldSoft }}
-              >
-                Join the circle of<br />distinguished guests.
+              <p className="text-2xl font-black tracking-tighter leading-snug">
+                Join the circle of<br />
+                <span style={{ color: theme.primary }}>distinguished guests.</span>
               </p>
             </div>
           </div>
@@ -132,23 +109,16 @@ export default function SignupPage() {
           {/* Form side */}
           <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center overflow-y-auto max-h-[82vh] scrollbar-thin">
 
-            <p
-              className="text-xs uppercase tracking-[0.4em] font-medium mb-3"
-              style={{ color: theme.goldSoft }}
-            >
-              Become a Member
-            </p>
-            <h1
-              className="text-3xl md:text-4xl mb-1 leading-none"
-              style={{ fontFamily: 'var(--font-display)', fontWeight: 700 }}
-            >
-              Sign <span style={{ color: theme.gold }}>Up</span>
+            <h1 className="text-3xl md:text-4xl font-black tracking-tighter mb-1">
+              Create <span style={{ color: theme.primary }}>Account</span>
             </h1>
-            <p style={{ color: theme.textMuted }} className="text-sm mb-5">Create your Hotel Royal account</p>
+            <p style={{ color: theme.textMuted }} className="text-sm font-light mb-5">
+              Create your Hotel Royal account
+            </p>
 
             {success && (
               <div
-                style={{ backgroundColor: theme.successBg, color: theme.successText, borderColor: theme.gold }}
+                style={{ backgroundColor: theme.successBg, color: theme.successText, borderColor: theme.primary }}
                 className="mb-4 p-3 border-l-4 rounded-r-lg text-sm"
               >
                 ✅ {success}
@@ -157,7 +127,7 @@ export default function SignupPage() {
 
             {error && (
               <div
-                style={{ backgroundColor: theme.errorBg, color: theme.errorText, borderColor: theme.gold }}
+                style={{ backgroundColor: theme.errorBg, color: theme.errorText, borderColor: theme.primary }}
                 className="mb-4 p-3 border-l-4 rounded-r-lg text-sm"
               >
                 ⚠️ {error}
@@ -167,65 +137,63 @@ export default function SignupPage() {
             <form onSubmit={handleSignup} className="space-y-3.5" autoComplete="off">
 
               <div>
-                <label className="text-xs font-medium uppercase tracking-widest mb-1 block" style={{ color: theme.goldSoft }}>Full Name</label>
+                <label className="text-xs font-medium uppercase tracking-widest mb-1 block" style={{ color: theme.textMuted }}>Full Name</label>
                 <input
                   type="text"
                   autoComplete="new-password"
                   placeholder="Enter your full name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  style={{ backgroundColor: theme.bgInput, color: '#fff', borderColor: 'rgba(201,162,91,0.25)' }}
-                  className="w-full border rounded-xl py-2.5 px-4 outline-none transition-all placeholder:text-[#5a6072] text-sm focus:border-[#c9a25b]"
+                  style={{ backgroundColor: theme.inputBg, color: '#fff', borderColor: theme.border }}
+                  className="w-full border rounded-2xl py-2.5 px-4 outline-none transition-all placeholder:text-[#4b5568] text-sm focus:border-[#487be8]"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-medium uppercase tracking-widest mb-1 block" style={{ color: theme.goldSoft }}>Email</label>
+                <label className="text-xs font-medium uppercase tracking-widest mb-1 block" style={{ color: theme.textMuted }}>Email</label>
                 <input
                   type="email"
                   autoComplete="new-password"
                   placeholder="email@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  style={{ backgroundColor: theme.bgInput, color: '#fff', borderColor: 'rgba(201,162,91,0.25)' }}
-                  className="w-full border rounded-xl py-2.5 px-4 outline-none transition-all placeholder:text-[#5a6072] text-sm focus:border-[#c9a25b]"
+                  style={{ backgroundColor: theme.inputBg, color: '#fff', borderColor: theme.border }}
+                  className="w-full border rounded-2xl py-2.5 px-4 outline-none transition-all placeholder:text-[#4b5568] text-sm focus:border-[#487be8]"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 <div>
-                  <label className="text-xs font-medium uppercase tracking-widest mb-1 block" style={{ color: theme.goldSoft }}>Password</label>
+                  <label className="text-xs font-medium uppercase tracking-widest mb-1 block" style={{ color: theme.textMuted }}>Password</label>
                   <input
                     type="password"
                     autoComplete="new-password"
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    style={{ backgroundColor: theme.bgInput, color: '#fff', borderColor: 'rgba(201,162,91,0.25)' }}
-                    className="w-full border rounded-xl py-2.5 px-4 outline-none transition-all placeholder:text-[#5a6072] text-sm focus:border-[#c9a25b]"
+                    style={{ backgroundColor: theme.inputBg, color: '#fff', borderColor: theme.border }}
+                    className="w-full border rounded-2xl py-2.5 px-4 outline-none transition-all placeholder:text-[#4b5568] text-sm focus:border-[#487be8]"
                   />
                 </div>
 
                 <div>
-                  <label className="text-xs font-medium uppercase tracking-widest mb-1 block" style={{ color: theme.goldSoft }}>Confirm Password</label>
+                  <label className="text-xs font-medium uppercase tracking-widest mb-1 block" style={{ color: theme.textMuted }}>Confirm Password</label>
                   <input
                     type="password"
                     autoComplete="new-password"
                     placeholder="••••••••"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    style={{ backgroundColor: theme.bgInput, color: '#fff', borderColor: 'rgba(201,162,91,0.25)' }}
-                    className="w-full border rounded-xl py-2.5 px-4 outline-none transition-all placeholder:text-[#5a6072] text-sm focus:border-[#c9a25b]"
+                    style={{ backgroundColor: theme.inputBg, color: '#fff', borderColor: theme.border }}
+                    className="w-full border rounded-2xl py-2.5 px-4 outline-none transition-all placeholder:text-[#4b5568] text-sm focus:border-[#487be8]"
                   />
                 </div>
               </div>
 
               <button
                 type="submit"
-                style={{ borderColor: theme.gold, color: theme.gold }}
-                className="w-full border rounded-full py-3 text-sm font-medium uppercase tracking-widest transition-all duration-300 hover:text-[#05070c] mt-2"
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = theme.gold)}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+                style={{ backgroundColor: theme.primary }}
+                className="w-full text-white font-bold py-3.5 rounded-2xl transition-all duration-200 hover:brightness-125 hover:scale-105 active:scale-90 shadow-xl text-base mt-2"
               >
                 Create Account
               </button>
@@ -234,7 +202,7 @@ export default function SignupPage() {
 
             <p className="mt-5 text-center text-sm" style={{ color: theme.textMuted }}>
               Already have an account?{' '}
-              <Link href="/login" style={{ color: theme.gold }} className="font-medium hover:underline">Login here</Link>
+              <Link href="/login" style={{ color: theme.primary }} className="font-medium hover:underline">Login here</Link>
             </p>
 
           </div>
@@ -244,7 +212,7 @@ export default function SignupPage() {
       {/* Footer — same as homepage */}
       <footer
         className="py-4 text-center text-xs tracking-[0.3em] uppercase w-full border-t"
-        style={{ backgroundColor: theme.bgDeep, borderColor: 'rgba(201,162,91,0.15)', color: '#5a6072' }}
+        style={{ backgroundColor: theme.bgMain, borderColor: theme.border, color: '#4b5568' }}
       >
         <p>&copy; {new Date().getFullYear()} Hotel Royal. All rights reserved.</p>
       </footer>
