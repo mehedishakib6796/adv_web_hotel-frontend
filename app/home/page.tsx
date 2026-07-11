@@ -4,31 +4,17 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Playfair_Display, Inter } from 'next/font/google';
-
-const display = Playfair_Display({
-  subsets: ['latin'],
-  weight: ['400', '600', '700', '900'],
-  variable: '--font-display',
-});
-
-const body = Inter({
-  subsets: ['latin'],
-  weight: ['300', '400', '500'],
-  variable: '--font-body',
-});
 
 const HomePage = () => {
   const [userName, setUserName] = useState<string>("");
   const router = useRouter();
 
+  
   const theme = {
-    bgMain: "#0b0f1a",
-    bgDeep: "#05070c",
-    gold: "#c9a25b",
-    goldSoft: "#e8d6ab",
-    textMuted: "#cbd2e0",
-    imgOpacity: "0.18",
+    bgMain: "#0f172a",
+    primary: "#487be8",
+    textMuted: "#94a3b8",
+    imgOpacity: "0.30"
   };
 
   useEffect(() => {
@@ -42,95 +28,69 @@ const HomePage = () => {
     }
   }, [router]);
 
-  const buttonClass = `w-full sm:w-56 border rounded-full py-4 text-sm font-medium uppercase tracking-widest transition-all duration-300 hover:text-[#05070c] text-center`;
+ 
+
+  const buttonClass = `w-full sm:w-50 text-white font-bold py-5 rounded-2xl transition-all duration-200 hover:brightness-125 hover:scale-105 active:scale-90 shadow-xl text-xl text-center`;
+  
 
   return (
-    <div
-      className={`${display.variable} ${body.variable} min-h-screen text-white flex flex-col antialiased`}
-      style={{ backgroundColor: theme.bgMain, fontFamily: 'var(--font-body)' }}
-    >
-
+    <div style={{ backgroundColor: theme.bgMain }}
+     className="min-h-screen text-white flex flex-col font-sans">
+      
       <Header userName={userName} />
 
-      <main className="flex-1 relative flex items-center justify-center overflow-hidden px-6 py-32">
-
-        {/* Background image, same treatment as login/signup */}
+      <main className="flex-1 relative flex items-center justify-center">
+        
         <div
-          className="absolute inset-0 bg-cover bg-center scale-105"
+          className="absolute inset-0 bg-cover bg-center"
           style={{
             backgroundImage: "url('https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=2070')",
-            opacity: theme.imgOpacity,
+            opacity: theme.imgOpacity
           }}
-        />
-        <div
-          className="absolute inset-0"
-          style={{ background: `radial-gradient(ellipse at center, transparent 20%, ${theme.bgDeep} 90%)` }}
-        />
-        <div className="absolute inset-0 bg-black/40" />
+        ></div>
 
-        <div className="relative z-10 text-center px-6 mb-16">
+        <div className="relative text-center z-10 px-6  mb-16">
 
-          <p
-            className="text-xs md:text-sm uppercase tracking-[0.4em] font-medium mb-3"
-            style={{ color: theme.goldSoft }}
-          >
-            Welcome Back
-          </p>
-
-          <h1
-            className="text-5xl md:text-7xl mb-6 leading-none select-none"
-            style={{ fontFamily: 'var(--font-display)', fontWeight: 700 }}
-          >
-            <span style={{ color: theme.gold }}>{userName}</span>
+          
+          <h1 className="text-6xl text:center md:text-8xl font-black  transition-all hover:brightness-125 duration-300 hover:scale-105 active:scale-90 mb-6 tracking-tighter ">
+            Welcome, <br className="md:hidden" /> 
+            <span style={{ color: theme.primary }}>{userName}</span>
           </h1>
-
-          <div className="flex items-center justify-center gap-4 mb-8">
-            <span className="h-px w-10" style={{ backgroundColor: theme.gold }} />
-            <span className="w-1.5 h-1.5 rotate-45" style={{ backgroundColor: theme.gold }} />
-            <span className="h-px w-10" style={{ backgroundColor: theme.gold }} />
-          </div>
-
-          <p
-            style={{ color: theme.textMuted }}
-            className="text-lg md:text-xl mb-16 max-w-2xl mx-auto font-light"
-          >
-            Experience the pinnacle of luxury at{' '}
-            <span className="text-white font-semibold italic">Hotel Royal</span>.
+          
+        
+          <p style={{ color: theme.textMuted }}
+           className="text-xl md:text-2xl mb-16 max-w-2xl mx-auto font-light">
+            Experience the pinnacle of luxury at <span className="text-white font-semibold italic">Hotel Royal</span>.
           </p>
 
-          <div className="flex flex-col sm:flex-row justify-center gap-6 w-full max-w-4xl mx-auto">
+          <div className="flex flex-col sm:flex-row justify-center gap-6 mb-16 w-full max-w-5xl mx-auto">
             <Link href="/view-rooms">
-              <button
+              <button 
                 className={buttonClass}
-                style={{ borderColor: theme.gold, color: theme.gold }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = theme.gold)}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+                style={{ backgroundColor: theme.primary }}
               >
                 Book Room
               </button>
             </Link>
 
             <Link href="/my-bookings">
-              <button
+              <button 
                 className={buttonClass}
-                style={{ borderColor: theme.gold, color: theme.gold }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = theme.gold)}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+                style={{ backgroundColor: theme.primary }}
               >
                 My Bookings
               </button>
             </Link>
 
             <Link href="/profile">
-              <button
+              <button 
                 className={buttonClass}
-                style={{ borderColor: theme.gold, color: theme.gold }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = theme.gold)}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+                style={{ backgroundColor: theme.primary }}
               >
                 My Profile
               </button>
             </Link>
+
           </div>
         </div>
       </main>
